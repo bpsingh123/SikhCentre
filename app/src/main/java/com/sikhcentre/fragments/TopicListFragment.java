@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import com.sikhcentre.R;
 import com.sikhcentre.adapters.TopicListAdapter;
@@ -48,13 +49,20 @@ public class TopicListFragment extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         searchViewModel = SearchViewModel.INSTANCE;
+        setUpViews();
+        bind();
+    }
 
+    private void setUpViews() {
         topicRecyclerView = (RecyclerView) getView().findViewById(R.id.recycler_view_topic);
         topicRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        topicListAdapter = new TopicListAdapter();
+        topicListAdapter = new TopicListAdapter(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
+                int a = pos;
+            }
+        });
         topicRecyclerView.setAdapter(topicListAdapter);
-
-        bind();
     }
 
     @Override
