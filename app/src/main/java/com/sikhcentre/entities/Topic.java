@@ -191,7 +191,7 @@ public class Topic {
     }
 
     public enum TopicType {
-        UNKNOWN(0), TEXT(1), VIDEO(2), IMAGE(3);
+        UNKNOWN(0), TEXT(1), IMAGE(2), AUDIO(3), VIDEO(4);
         final int id;
 
         TopicType(int id) {
