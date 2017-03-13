@@ -3,6 +3,7 @@ package com.sikhcentre.activities;
 import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -12,13 +13,28 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.sikhcentre.R;
+import com.sikhcentre.entities.Topic;
+import com.sikhcentre.fragments.AudioFragment;
 import com.sikhcentre.fragments.TopicListFragment;
+import com.sikhcentre.schedulers.ISchedulerProvider;
+import com.sikhcentre.schedulers.MainSchedulerProvider;
 import com.sikhcentre.utils.FragmentUtils;
 import com.sikhcentre.viewmodel.SearchViewModel;
 
+import rx.Observer;
+import rx.subscriptions.CompositeSubscription;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    @NonNull
     private SearchViewModel searchViewModel = SearchViewModel.INSTANCE;
+
+    @NonNull
+    private CompositeSubscription subscription;
+
+    @NonNull
+    ISchedulerProvider schedulerProvider = MainSchedulerProvider.INSTANCE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,5 +140,58 @@ public class MainActivity extends AppCompatActivity
 //        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 //        drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void bind() {
+        subscription = new CompositeSubscription();
+
+        subscription.add(searchViewModel.getSelectedTopicSubjectAsObservable()
+                .observeOn(schedulerProvider.ui())
+                .subscribe(new Observer<Topic>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+
+                    @Override
+                    public void onNext(Topic topic) {
+
+                        switch (topic.getTopicType()) {
+                            case TEXT:
+                                break;
+                            case IMAGE:
+                                break;
+                            case AUDIO:
+                                FragmentUtils.replaceFragment(R.id.container_framelayout,
+                                        new AudioFragment(), getIntent().getExtras(),
+                                        getSupportFragmentManager(), FragmentUtils.FragmentTag.AUDIO);
+                                break;
+                            case VIDEO:
+                                break;
+                            default:
+                        }
+
+                    }
+                }));
+
+    }
+
+    private void unBind() {
+        subscription.unsubscribe();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bind();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unBind();
     }
 }

@@ -11,7 +11,8 @@ import android.support.v4.app.FragmentTransaction;
 
 public class FragmentUtils {
     public enum FragmentTag {
-        TOPIC_LIST
+        TOPIC_LIST,
+        AUDIO
     }
 
     public static void createFragment(int containerId, Fragment fragment, Bundle bundle,
@@ -23,12 +24,14 @@ public class FragmentUtils {
     public static void replaceFragment(int containerId, Fragment fragment, Bundle bundle,
                                        FragmentManager fragmentManager, FragmentTag fragmentTag) {
         Fragment myFragment = fragmentManager.findFragmentByTag(fragmentTag.name());
-        if (myFragment != null && myFragment.isVisible()) {
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            fragment.setArguments(bundle);
-            transaction.replace(containerId, fragment, fragmentTag.name());
-            transaction.addToBackStack(null);
-            transaction.commit();
+        if (myFragment == null || !myFragment.isVisible()) {
+            myFragment = fragment;
         }
+
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        myFragment.setArguments(bundle);
+        transaction.replace(containerId, myFragment, fragmentTag.name());
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }

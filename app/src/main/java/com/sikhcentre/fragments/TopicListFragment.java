@@ -27,7 +27,6 @@ import rx.subscriptions.CompositeSubscription;
  */
 
 public class TopicListFragment extends BaseFragment {
-    private RecyclerView topicRecyclerView;
     private TopicListAdapter topicListAdapter;
 
     @NonNull
@@ -50,16 +49,15 @@ public class TopicListFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         searchViewModel = SearchViewModel.INSTANCE;
         setUpViews();
-        bind();
     }
 
     private void setUpViews() {
-        topicRecyclerView = (RecyclerView) getView().findViewById(R.id.recycler_view_topic);
+        RecyclerView topicRecyclerView = (RecyclerView) getView().findViewById(R.id.recycler_view_topic);
         topicRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         topicListAdapter = new TopicListAdapter(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                int a = pos;
+                searchViewModel.handleSelectedTopic(getActivity(), topicListAdapter.getTopicAt(pos));
             }
         });
         topicRecyclerView.setAdapter(topicListAdapter);
@@ -68,23 +66,24 @@ public class TopicListFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        bind();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        unBind();
     }
 
     @Override
     public void onDestroy() {
-        unBind();
         super.onDestroy();
     }
 
     private void bind() {
         subscription = new CompositeSubscription();
 
-        subscription.add(searchViewModel.getTopicListObservable()
+        subscription.add(searchViewModel.getTopicListSubjectAsObservable()
                 .observeOn(schedulerProvider.ui())
                 .subscribe(new Observer<List<Topic>>() {
                     @Override

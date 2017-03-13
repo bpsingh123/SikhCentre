@@ -47,6 +47,11 @@ public class TopicListAdapter extends RecyclerView.Adapter<TopicListAdapter.Topi
         notifyDataSetChanged();
     }
 
+    public Topic getTopicAt(int pos) {
+        return topicList != null && pos < topicList.size() ? topicList.get(pos) : null;
+    }
+
+
     @Override
     public int getItemCount() {
         return topicList != null ? topicList.size() : 0;

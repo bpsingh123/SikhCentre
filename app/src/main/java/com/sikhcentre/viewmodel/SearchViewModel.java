@@ -1,5 +1,6 @@
 package com.sikhcentre.viewmodel;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.sikhcentre.database.TopicRepository;
@@ -16,20 +17,31 @@ import rx.subjects.BehaviorSubject;
  * Created by brinder.singh on 28/01/17.
  */
 
-public enum  SearchViewModel {
+public enum SearchViewModel {
     INSTANCE;
 
     @NonNull
-    private final BehaviorSubject<List<Topic>> topicList = BehaviorSubject.create();
+    private final BehaviorSubject<List<Topic>> topicListSubject = BehaviorSubject.create();
+
+    @NonNull
+    private final BehaviorSubject<Topic> selectedTopicSubject = BehaviorSubject.create();
 
     ISchedulerProvider schedulerProvider = MainSchedulerProvider.INSTANCE;
 
     public void handleSearchTopic(String text) {
-        topicList.onNext(TopicRepository.getTopicList(text));
+        topicListSubject.onNext(TopicRepository.getTopicList(text));
     }
 
-    public Observable<List<Topic>> getTopicListObservable() {
-        return topicList.asObservable();
+    public Observable<List<Topic>> getTopicListSubjectAsObservable() {
+        return topicListSubject.asObservable();
+    }
+
+    public Observable<Topic> getSelectedTopicSubjectAsObservable() {
+        return selectedTopicSubject.asObservable();
+    }
+
+    public void handleSelectedTopic(Context context, Topic topic) {
+        selectedTopicSubject.onNext(topic);
     }
 
 }
