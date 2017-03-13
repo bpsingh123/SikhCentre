@@ -1,14 +1,13 @@
 package com.sikhcentre.entities;
 
-import com.sikhcentre.entities.joinentities.TopicAuthor;
-import com.sikhcentre.entities.joinentities.TopicTag;
-
 import org.greenrobot.greendao.DaoException;
+import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.JoinEntity;
 import org.greenrobot.greendao.annotation.ToMany;
+import org.greenrobot.greendao.converter.PropertyConverter;
 
 import java.util.List;
 
@@ -20,7 +19,9 @@ public class Topic {
     @Id
     private Long id;
     private String title;
-    private String type;
+
+    @Convert(converter = TopicTypeConverter.class, columnType = Integer.class)
+    private TopicType topicType;
 
     @ToMany
     @JoinEntity(
@@ -39,18 +40,22 @@ public class Topic {
     private List<Tag> tags;
 
 
-    /** Used to resolve relations */
+    /**
+     * Used to resolve relations
+     */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
-    /** Used for active entity operations. */
+    /**
+     * Used for active entity operations.
+     */
     @Generated(hash = 694021448)
     private transient TopicDao myDao;
 
-    @Generated(hash = 1117906775)
-    public Topic(Long id, String title, String type) {
+    @Generated(hash = 496296560)
+    public Topic(Long id, String title, TopicType topicType) {
         this.id = id;
         this.title = title;
-        this.type = type;
+        this.topicType = topicType;
     }
 
     @Generated(hash = 849012203)
@@ -68,14 +73,6 @@ public class Topic {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getType() {
-        return this.type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getTitle() {
@@ -104,7 +101,9 @@ public class Topic {
         return authors;
     }
 
-    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    /**
+     * Resets a to-many relationship, making the next get call to query for a fresh result.
+     */
     @Generated(hash = 405652703)
     public synchronized void resetAuthors() {
         authors = null;
@@ -168,10 +167,20 @@ public class Topic {
         return tags;
     }
 
-    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    /**
+     * Resets a to-many relationship, making the next get call to query for a fresh result.
+     */
     @Generated(hash = 404234)
     public synchronized void resetTags() {
         tags = null;
+    }
+
+    public TopicType getTopicType() {
+        return this.topicType;
+    }
+
+    public void setTopicType(TopicType topicType) {
+        this.topicType = topicType;
     }
 
     /** called by internal mechanisms, do not call yourself. */
@@ -179,5 +188,35 @@ public class Topic {
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getTopicDao() : null;
+    }
+
+    public enum TopicType {
+        UNKNOWN(0), TEXT(1), VIDEO(2), IMAGE(3);
+        final int id;
+
+        TopicType(int id) {
+            this.id = id;
+        }
+    }
+
+    public static class TopicTypeConverter implements PropertyConverter<TopicType, Integer> {
+
+        @Override
+        public TopicType convertToEntityProperty(Integer databaseValue) {
+            if (databaseValue == null) {
+                return null;
+            }
+            for (TopicType topicType : TopicType.values()) {
+                if (topicType.id == databaseValue) {
+                    return topicType;
+                }
+            }
+            return TopicType.UNKNOWN;
+        }
+
+        @Override
+        public Integer convertToDatabaseValue(TopicType entityProperty) {
+            return entityProperty == null ? null : entityProperty.id;
+        }
     }
 }

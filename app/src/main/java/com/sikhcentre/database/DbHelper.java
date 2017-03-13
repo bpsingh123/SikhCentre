@@ -11,7 +11,7 @@ import com.sikhcentre.entities.DaoMaster;
  * Created by brinder.singh on 31/12/16.
  */
 
-public class DbHelper extends DaoMaster.OpenHelper {
+public class DbHelper extends DaoMaster.DevOpenHelper {
     private Context context;
     private static final Logger LOGGER = LoggerManager.getLogger();
 

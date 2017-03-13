@@ -1,4 +1,4 @@
-package com.sikhcentre.entities.joinentities;
+package com.sikhcentre.entities;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;

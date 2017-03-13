@@ -1,7 +1,5 @@
 package com.sikhcentre.entities;
 
-import com.sikhcentre.entities.joinentities.TopicTag;
-
 import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
