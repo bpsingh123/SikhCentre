@@ -3,6 +3,7 @@ package com.sikhcentre.fragments;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,16 +48,18 @@ public class TopicListFragment extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         searchViewModel = SearchViewModel.INSTANCE;
+
         topicRecyclerView = (RecyclerView) getView().findViewById(R.id.recycler_view_topic);
+        topicRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         topicListAdapter = new TopicListAdapter();
         topicRecyclerView.setAdapter(topicListAdapter);
+
         bind();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        searchViewModel.handleSearchTopic(null);
     }
 
     @Override
@@ -73,7 +76,6 @@ public class TopicListFragment extends BaseFragment {
     private void bind() {
         subscription = new CompositeSubscription();
 
-
         subscription.add(searchViewModel.getTopicListObservable()
                 .observeOn(schedulerProvider.ui())
                 .subscribe(new Observer<List<Topic>>() {
@@ -87,7 +89,7 @@ public class TopicListFragment extends BaseFragment {
 
                     @Override
                     public void onNext(List<Topic> topics) {
-
+                        topicListAdapter.setTopicList(topics);
                     }
                 }));
 

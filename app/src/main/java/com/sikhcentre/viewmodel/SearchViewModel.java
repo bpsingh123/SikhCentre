@@ -29,7 +29,6 @@ public enum  SearchViewModel {
     }
 
     public Observable<List<Topic>> getTopicListObservable() {
-//        return topicList.observeOn(schedulerProvider.computation()).asObservable();
         return topicList.asObservable();
     }
 
