@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import rx.subscriptions.CompositeSubscription;
 
 public class TopicListFragment extends BaseFragment {
     private TopicListAdapter topicListAdapter;
+    private Toolbar audioToolbar;
 
     @NonNull
     private CompositeSubscription subscription;
@@ -61,6 +63,9 @@ public class TopicListFragment extends BaseFragment {
             }
         });
         topicRecyclerView.setAdapter(topicListAdapter);
+
+        audioToolbar = (Toolbar) getView().findViewById(R.id.toolbar_audio);
+        audioToolbar.setVisibility(View.GONE);
     }
 
     @Override
@@ -97,6 +102,31 @@ public class TopicListFragment extends BaseFragment {
                     @Override
                     public void onNext(List<Topic> topics) {
                         topicListAdapter.setTopicList(topics);
+                    }
+                }));
+
+        subscription.add(searchViewModel.getSelectedTopicSubjectAsObservable()
+                .observeOn(schedulerProvider.ui())
+                .subscribe(new Observer<Topic>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+
+                    @Override
+                    public void onNext(Topic topic) {
+
+                        switch (topic.getTopicType()) {
+                            case AUDIO:
+                                audioToolbar.setVisibility(View.VISIBLE);
+                                break;
+                            default:
+                                audioToolbar.setVisibility(View.GONE);
+                        }
+
                     }
                 }));
 

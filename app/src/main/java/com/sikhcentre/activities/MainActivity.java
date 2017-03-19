@@ -14,7 +14,6 @@ import android.view.MenuItem;
 
 import com.sikhcentre.R;
 import com.sikhcentre.entities.Topic;
-import com.sikhcentre.fragments.AudioFragment;
 import com.sikhcentre.fragments.TopicListFragment;
 import com.sikhcentre.schedulers.ISchedulerProvider;
 import com.sikhcentre.schedulers.MainSchedulerProvider;
@@ -163,11 +162,6 @@ public class MainActivity extends AppCompatActivity
                             case TEXT:
                                 break;
                             case IMAGE:
-                                break;
-                            case AUDIO:
-                                FragmentUtils.replaceFragment(R.id.container_framelayout,
-                                        new AudioFragment(), getIntent().getExtras(),
-                                        getSupportFragmentManager(), FragmentUtils.FragmentTag.AUDIO);
                                 break;
                             case VIDEO:
                                 break;

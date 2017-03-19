@@ -12,10 +12,9 @@
         android:clipToPadding="false"
         android:scrollbars="vertical" />
 
-    <FrameLayout
-        android:id="@+id/container_audio_framelayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/recycler_view_topic" />
+    <include
+        android:id="@+id/toolbar_audio"
+        layout="@layout/audio_toolbar"
+        android:visibility="gone" />
 
 </RelativeLayout>
