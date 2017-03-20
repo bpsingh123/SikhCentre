@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 
 import com.sikhcentre.R;
 import com.sikhcentre.adapters.TopicListAdapter;
+import com.sikhcentre.media.MediaPlayerService;
 import com.sikhcentre.entities.Topic;
 import com.sikhcentre.schedulers.ISchedulerProvider;
 import com.sikhcentre.schedulers.MainSchedulerProvider;
@@ -122,6 +123,8 @@ public class TopicListFragment extends BaseFragment {
                         switch (topic.getTopicType()) {
                             case AUDIO:
                                 audioToolbar.setVisibility(View.VISIBLE);
+//                                MediaPlayerService.startMediaPlayer(getContext(), "https://drive.google.com/file/d/0B0w9CcByOeIeY0dLWm9DR0xkaWs/view");
+                                MediaPlayerService.startMediaPlayer(getContext(), "http://www.akji.org.uk/multimedia/Dallas/2016/001_Dallas_Sep2016_FriM_ADV_MasterNiranjanSinghJee.mp3");
                                 break;
                             default:
                                 audioToolbar.setVisibility(View.GONE);
