@@ -12,13 +12,13 @@ import java.util.List;
 public class TopicRepository {
     public static List<Topic> getTopicList(String txt) {
         List<Topic> topicList = new ArrayList<>();
-        topicList.add(new Topic(1L, "Topic 1", Topic.TopicType.TEXT));
-        topicList.add(new Topic(2L, "Topic 2", Topic.TopicType.IMAGE));
-        topicList.add(new Topic(3L, "Topic 3", Topic.TopicType.AUDIO));
-        topicList.add(new Topic(4L, "Topic 4", Topic.TopicType.VIDEO));
-        topicList.add(new Topic(5L, "Topic 5", Topic.TopicType.AUDIO));
-        topicList.add(new Topic(6L, "Topic 6", Topic.TopicType.VIDEO));
-        topicList.add(new Topic(7L, "Topic 7", Topic.TopicType.TEXT));
+        topicList.add(new Topic(1L, "Topic 1", "", Topic.TopicType.TEXT));
+        topicList.add(new Topic(2L, "Topic 2", "", Topic.TopicType.IMAGE));
+        topicList.add(new Topic(3L, "Topic 3", "", Topic.TopicType.AUDIO));
+        topicList.add(new Topic(4L, "Topic 4", "", Topic.TopicType.VIDEO));
+        topicList.add(new Topic(5L, "Topic 5", "", Topic.TopicType.AUDIO));
+        topicList.add(new Topic(6L, "Topic 6", "", Topic.TopicType.VIDEO));
+        topicList.add(new Topic(7L, "Topic 7", "", Topic.TopicType.TEXT));
         return topicList;
     }
 }

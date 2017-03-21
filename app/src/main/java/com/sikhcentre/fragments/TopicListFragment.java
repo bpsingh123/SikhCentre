@@ -124,7 +124,8 @@ public class TopicListFragment extends BaseFragment {
                             case AUDIO:
                                 audioToolbar.setVisibility(View.VISIBLE);
 //                                MediaPlayerService.startMediaPlayer(getContext(), "https://drive.google.com/file/d/0B0w9CcByOeIeY0dLWm9DR0xkaWs/view");
-                                MediaPlayerService.startMediaPlayer(getContext(), "http://www.akji.org.uk/multimedia/Dallas/2016/001_Dallas_Sep2016_FriM_ADV_MasterNiranjanSinghJee.mp3");
+//                                MediaPlayerService.startMediaPlayer(getContext(), "https://dl.dropboxusercontent.com/s/qohtv5u87x5ofgy/Sikhi_Di_Dastaaan.mp3");
+                                MediaPlayerService.startMediaPlayer(getContext(), "http://gdurl.com/hJLX");
                                 break;
                             default:
                                 audioToolbar.setVisibility(View.GONE);

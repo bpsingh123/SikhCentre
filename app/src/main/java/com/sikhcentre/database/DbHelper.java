@@ -2,26 +2,24 @@ package com.sikhcentre.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
-import com.noveogroup.android.log.Logger;
-import com.noveogroup.android.log.LoggerManager;
 import com.sikhcentre.entities.DaoMaster;
 
 /**
  * Created by brinder.singh on 31/12/16.
  */
 
-public class DbHelper extends DaoMaster.DevOpenHelper {
-    private Context context;
-    private static final Logger LOGGER = LoggerManager.getLogger();
+public class DbHelper extends DaoMaster.OpenHelper {
+    private static final String TAG = "DbHelper";
 
-    public DbHelper(Context context, String name, SQLiteDatabase.CursorFactory factory) {
-        super(context, name, factory);
+    public DbHelper(Context context, String name) {
+        super(context, name);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        super.onUpgrade(db, oldVersion, newVersion);
+        Log.i(TAG, "greenDAO : Upgrading Sikh Centre DB from version " + oldVersion + " to " + newVersion);
         if (oldVersion < newVersion) {
             try {
                 db.beginTransaction();
@@ -31,7 +29,7 @@ public class DbHelper extends DaoMaster.DevOpenHelper {
                 }
                 db.setTransactionSuccessful();
             } catch (Exception e) {
-                LOGGER.e("greenDAO : Exception migrating db:" + e);
+                Log.e(TAG, "greenDAO : Exception migrating db:" + e);
             } finally {
                 db.endTransaction();
             }
@@ -39,5 +37,8 @@ public class DbHelper extends DaoMaster.DevOpenHelper {
     }
 
     private void upgradeFromVersion1to2(SQLiteDatabase db) {
+        Log.d(TAG, "updating to version2 from version1");
+        //write migration queries here
     }
 }
+
