@@ -4,6 +4,7 @@ import android.app.Application;
 import android.support.annotation.NonNull;
 
 import com.sikhcentre.database.DbUtils;
+import com.sikhcentre.network.TopicDownloadHandler;
 import com.sikhcentre.schedulers.ISchedulerProvider;
 import com.sikhcentre.schedulers.MainSchedulerProvider;
 
@@ -17,6 +18,7 @@ public class SikhCentreApplication extends Application {
     public void onCreate() {
         super.onCreate();
         initialize();
+        TopicDownloadHandler.fetchData();
     }
 
     @NonNull
@@ -24,7 +26,7 @@ public class SikhCentreApplication extends Application {
         return MainSchedulerProvider.INSTANCE;
     }
 
-    public void initialize(){
+    public void initialize() {
         DbUtils.INSTANCE.init(getApplicationContext());
     }
 }
