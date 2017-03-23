@@ -251,6 +251,32 @@ public class Topic {
         return id.hashCode();
     }
 
+    public String getAuthorString() {
+        List<Author> authors = getAuthors();
+        if (authors != null) {
+            StringBuilder authorStr = new StringBuilder();
+            for (Author author : authors) {
+                authorStr.append(author.getName());
+                authorStr.append(", ");
+            }
+            return authorStr.substring(0, authorStr.length()-2);
+        }
+        return "";
+    }
+
+    public String getTagString() {
+        List<Tag> Tags = getTags();
+        if (Tags != null) {
+            StringBuilder tagStr = new StringBuilder();
+            for (Tag tag : Tags) {
+                tagStr.append(tag.getName());
+                tagStr.append(", ");
+            }
+            return tagStr.substring(0, tagStr.length()-2);
+        }
+        return "";
+    }
+
     /** called by internal mechanisms, do not call yourself. */
     @Generated(hash = 1373867845)
     public void __setDaoSession(DaoSession daoSession) {

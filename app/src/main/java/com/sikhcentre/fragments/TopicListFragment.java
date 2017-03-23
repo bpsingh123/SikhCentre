@@ -3,6 +3,7 @@ package com.sikhcentre.fragments;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -56,7 +57,8 @@ public class TopicListFragment extends BaseFragment {
 
     private void setUpViews() {
         RecyclerView topicRecyclerView = (RecyclerView) getView().findViewById(R.id.recycler_view_topic);
-        topicRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        topicRecyclerView.setLayoutManager(layoutManager);
         topicListAdapter = new TopicListAdapter(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
@@ -64,6 +66,10 @@ public class TopicListFragment extends BaseFragment {
             }
         });
         topicRecyclerView.setAdapter(topicListAdapter);
+
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(topicRecyclerView.getContext(),
+                layoutManager.getOrientation());
+        topicRecyclerView.addItemDecoration(dividerItemDecoration);
 
         audioToolbar = (Toolbar) getView().findViewById(R.id.toolbar_audio);
         audioToolbar.setVisibility(View.GONE);

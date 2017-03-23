@@ -60,6 +60,8 @@ public class TopicListAdapter extends RecyclerView.Adapter<TopicListAdapter.Topi
     static class TopicListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ImageView imageViewType;
         private TextView title;
+        private TextView author;
+        private TextView tags;
         private LinearLayout linearLayout;
         private static Map<Topic.TopicType, Integer> topicTypeIconMap;
         private AdapterView.OnItemClickListener onItemClickListener;
@@ -76,6 +78,8 @@ public class TopicListAdapter extends RecyclerView.Adapter<TopicListAdapter.Topi
             super(itemView);
             linearLayout = (LinearLayout) itemView.findViewById(R.id.linearLayoutItem);
             title = (TextView) itemView.findViewById(R.id.textViewTopicItemTitle);
+            author = (TextView) itemView.findViewById(R.id.textViewTopicItemAuthor);
+            tags = (TextView) itemView.findViewById(R.id.textViewTopicItemTags);
             imageViewType = (ImageView) itemView.findViewById(R.id.imageViewItemType);
             linearLayout.setOnClickListener(this);
             this.onItemClickListener = onItemClickListener;
@@ -83,6 +87,8 @@ public class TopicListAdapter extends RecyclerView.Adapter<TopicListAdapter.Topi
 
         void bindTopic(Topic topic) {
             title.setText(topic.getTitle());
+            author.setText(topic.getAuthorString());
+            tags.setText(topic.getTagString());
             imageViewType.setImageResource(topicTypeIconMap.get(topic.getTopicType()));
         }
 
