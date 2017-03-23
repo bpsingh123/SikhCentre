@@ -21,7 +21,11 @@ import rx.subscriptions.CompositeSubscription;
  * Created by brinder.singh on 19/03/17.
  */
 
-public class MediaPlayerService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener {
+public class MediaPlayerService extends Service implements MediaPlayer.OnPreparedListener,
+        MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener,
+        MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnInfoListener,
+        MediaPlayer.OnSeekCompleteListener {
+
     public enum Action {
         PLAY,
         PAUSE,
@@ -87,6 +91,10 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
         mediaPlayer.setOnPreparedListener(this);
         mediaPlayer.setOnErrorListener(this);
+        mediaPlayer.setOnCompletionListener(this);
+        mediaPlayer.setOnBufferingUpdateListener(this);
+        mediaPlayer.setOnInfoListener(this);
+        mediaPlayer.setOnSeekCompleteListener(this);
     }
 
     private void setupListener() {
@@ -111,6 +119,27 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     @Override
     public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
         return false;
+    }
+
+
+    @Override
+    public void onCompletion(MediaPlayer mediaPlayer) {
+        stop();
+    }
+
+    @Override
+    public void onBufferingUpdate(MediaPlayer mediaPlayer, int i) {
+
+    }
+
+    @Override
+    public boolean onInfo(MediaPlayer mediaPlayer, int i, int i1) {
+        return false;
+    }
+
+    @Override
+    public void onSeekComplete(MediaPlayer mediaPlayer) {
+
     }
 
     public void play() {

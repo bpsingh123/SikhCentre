@@ -23,7 +23,7 @@ public class Author {
             sourceProperty = "authorId",
             targetProperty = "topicId"
     )
-    private List<Author> authors;
+    private List<Topic> topics;
     /** Used to resolve relations */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
@@ -55,34 +55,6 @@ public class Author {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    /**
-     * To-many relationship, resolved on first access (and after reset).
-     * Changes to to-many relations are not persisted, make changes to the target entity.
-     */
-    @Generated(hash = 1832046692)
-    public List<Author> getAuthors() {
-        if (authors == null) {
-            final DaoSession daoSession = this.daoSession;
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
-            AuthorDao targetDao = daoSession.getAuthorDao();
-            List<Author> authorsNew = targetDao._queryAuthor_Authors(id);
-            synchronized (this) {
-                if (authors == null) {
-                    authors = authorsNew;
-                }
-            }
-        }
-        return authors;
-    }
-
-    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
-    @Generated(hash = 405652703)
-    public synchronized void resetAuthors() {
-        authors = null;
     }
 
     /**
@@ -119,6 +91,34 @@ public class Author {
             throw new DaoException("Entity is detached from DAO context");
         }
         myDao.update(this);
+    }
+
+    /**
+     * To-many relationship, resolved on first access (and after reset).
+     * Changes to to-many relations are not persisted, make changes to the target entity.
+     */
+    @Generated(hash = 1742044025)
+    public List<Topic> getTopics() {
+        if (topics == null) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            TopicDao targetDao = daoSession.getTopicDao();
+            List<Topic> topicsNew = targetDao._queryAuthor_Topics(id);
+            synchronized (this) {
+                if (topics == null) {
+                    topics = topicsNew;
+                }
+            }
+        }
+        return topics;
+    }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    @Generated(hash = 1067351932)
+    public synchronized void resetTopics() {
+        topics = null;
     }
 
     /** called by internal mechanisms, do not call yourself. */

@@ -16,6 +16,9 @@ import java.util.List;
 public class TopicRepository {
     private static final String TAG = "TopicRepository";
 
+    private TopicRepository() {
+    }
+
     public static List<Topic> getTopicList(String txt) {
 //        List<Topic> topicList = new ArrayList<>();
 //        topicList.add(new Topic(1L, "ਰਾਜ਼ਸੀ ਬੁੱਧੀ", "", Topic.TopicType.TEXT));
@@ -29,7 +32,7 @@ public class TopicRepository {
         try {
             return DbUtils.INSTANCE.getDaoSession().getTopicDao().queryBuilder()
                     .where(TopicDao.Properties.Title.like("%" + txt + "%"))
-                    .listLazy();
+                    .list();
         } catch (Exception e) {
             Log.e(TAG, "getTopicList:" + txt, e);
         }

@@ -196,13 +196,6 @@ public class Topic {
         this.url = url;
     }
 
-    /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 1373867845)
-    public void __setDaoSession(DaoSession daoSession) {
-        this.daoSession = daoSession;
-        myDao = daoSession != null ? daoSession.getTopicDao() : null;
-    }
-
     public enum TopicType {
         @SerializedName("0")
         UNKNOWN(0),
@@ -240,5 +233,28 @@ public class Topic {
         public Integer convertToDatabaseValue(TopicType entityProperty) {
             return entityProperty == null ? null : entityProperty.id;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Topic topic = (Topic) o;
+
+        return id.equals(topic.id);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    /** called by internal mechanisms, do not call yourself. */
+    @Generated(hash = 1373867845)
+    public void __setDaoSession(DaoSession daoSession) {
+        this.daoSession = daoSession;
+        myDao = daoSession != null ? daoSession.getTopicDao() : null;
     }
 }
