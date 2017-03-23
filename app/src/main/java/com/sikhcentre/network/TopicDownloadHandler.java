@@ -11,17 +11,15 @@ import com.sikhcentre.entities.TopicAuthor;
 import com.sikhcentre.entities.TopicTag;
 import com.sikhcentre.models.Response;
 import com.sikhcentre.schedulers.MainSchedulerProvider;
+import com.sikhcentre.utils.StringUtils;
 
 import org.greenrobot.greendao.database.Database;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 import rx.Observable;
 import rx.Observer;
@@ -37,7 +35,7 @@ public class TopicDownloadHandler {
     private static Response downloadJson() {
         try {
             URL url = new URL("https://dl.dropboxusercontent.com/s/b0puce7rrpxkpjh/response.json");
-            String str = new Scanner(new BufferedReader(new InputStreamReader(url.openStream()))).useDelimiter("\\Z").next();
+            String str = StringUtils.toString(url.openStream());
             return new Gson().fromJson(str, Response.class);
         } catch (MalformedURLException e) {
             Log.e(TAG, "Error while reading url", e);

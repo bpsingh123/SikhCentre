@@ -3,7 +3,7 @@ package com.sikhcentre.viewmodel;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.sikhcentre.database.TopicRepository;
+import com.sikhcentre.database.repositories.TopicRepository;
 import com.sikhcentre.entities.Topic;
 import com.sikhcentre.schedulers.ISchedulerProvider;
 import com.sikhcentre.schedulers.MainSchedulerProvider;

@@ -2,6 +2,7 @@ package com.sikhcentre.models;
 
 import com.sikhcentre.entities.Topic;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,9 +10,9 @@ import java.util.List;
  */
 
 public class Response {
-    private List<TopicResponse> topics;
-    private List<AuthorResponse> authors;
-    private List<TagResponse> tags;
+    private List<TopicResponse> topics = new ArrayList<>();
+    private List<AuthorResponse> authors = new ArrayList<>();
+    private List<TagResponse> tags = new ArrayList<>();
 
     public static class TopicResponse {
         private Long id;
