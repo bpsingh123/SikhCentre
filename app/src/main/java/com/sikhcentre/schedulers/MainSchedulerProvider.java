@@ -2,15 +2,16 @@ package com.sikhcentre.schedulers;
 
 import android.support.annotation.NonNull;
 
-import rx.Scheduler;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by brinder.singh on 25/02/17.
  */
 
-public enum MainSchedulerProvider implements ISchedulerProvider {
+public enum MainSchedulerProvider
+        implements ISchedulerProvider {
     INSTANCE;
 
     @NonNull

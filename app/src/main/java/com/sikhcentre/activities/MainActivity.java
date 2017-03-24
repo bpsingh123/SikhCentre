@@ -20,8 +20,8 @@ import com.sikhcentre.schedulers.MainSchedulerProvider;
 import com.sikhcentre.utils.FragmentUtils;
 import com.sikhcentre.viewmodel.SearchViewModel;
 
-import rx.Observer;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity
     private SearchViewModel searchViewModel = SearchViewModel.INSTANCE;
 
     @NonNull
-    private CompositeSubscription subscription;
+    private CompositeDisposable subscription;
 
     @NonNull
     ISchedulerProvider schedulerProvider = MainSchedulerProvider.INSTANCE;
@@ -142,22 +142,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void bind() {
-        subscription = new CompositeSubscription();
+        subscription = new CompositeDisposable();
 
         subscription.add(searchViewModel.getSelectedTopicSubjectAsObservable()
                 .observeOn(schedulerProvider.ui())
-                .subscribe(new Observer<Topic>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new Consumer<Topic>() {
 
                     @Override
-                    public void onError(Throwable e) {
-                    }
-
-                    @Override
-                    public void onNext(Topic topic) {
-
+                    public void accept(@io.reactivex.annotations.NonNull Topic topic) throws Exception {
                         switch (topic.getTopicType()) {
                             case TEXT:
                                 break;
@@ -167,14 +159,14 @@ public class MainActivity extends AppCompatActivity
                                 break;
                             default:
                         }
-
                     }
+
                 }));
 
     }
 
     private void unBind() {
-        subscription.unsubscribe();
+        subscription.dispose();
     }
 
     @Override

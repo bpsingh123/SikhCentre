@@ -21,9 +21,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+
 
 /**
  * Created by brinder.singh on 21/03/17.
@@ -98,41 +101,54 @@ public class TopicDownloadHandler {
     }
 
     public static void fetchData() {
-        Observable.create(new Observable.OnSubscribe<Response>() {
+        Observable.create(new ObservableOnSubscribe<Response>() {
             @Override
-            public void call(Subscriber<? super Response> subscriber) {
-                subscriber.onNext(downloadJson());
+            public void subscribe(ObservableEmitter<Response> e) throws Exception {
+                e.onNext(downloadJson());
             }
+
         }).subscribeOn(MainSchedulerProvider.INSTANCE.computation())
                 .observeOn(MainSchedulerProvider.INSTANCE.computation())
                 .subscribe(new Observer<Response>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
                     @Override
                     public void onError(Throwable e) {
 
                     }
 
                     @Override
+                    public void onComplete() {
+
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
                     public void onNext(final Response response) {
-                        Observable.create(new Observable.OnSubscribe<Void>() {
+                        Observable.create(new ObservableOnSubscribe<Void>() {
                             @Override
-                            public void call(Subscriber<? super Void> subscriber) {
+                            public void subscribe(ObservableEmitter<Void> e) throws Exception {
                                 processTopicDownload(response);
-                                subscriber.onCompleted();
+                                e.onComplete();
                             }
+
                         }).subscribeOn(MainSchedulerProvider.INSTANCE.computation())
                                 .subscribe(new Observer<Void>() {
+
                                     @Override
-                                    public void onCompleted() {
+                                    public void onError(Throwable e) {
+
+                                    }
+
+                                    @Override
+                                    public void onComplete() {
                                         Log.i(TAG, "I am done");
                                     }
 
                                     @Override
-                                    public void onError(Throwable e) {
+                                    public void onSubscribe(Disposable d) {
 
                                     }
 

@@ -14,10 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
-import rx.subjects.BehaviorSubject;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.subjects.BehaviorSubject;
 
 /**
  * Created by brinder.singh on 28/01/17.
@@ -35,21 +37,26 @@ public enum SearchViewModel {
     ISchedulerProvider schedulerProvider = MainSchedulerProvider.INSTANCE;
 
     public void handleSearchTopic(final String text) {
-        Observable.create(new Observable.OnSubscribe<List<Topic>>() {
+        Observable.create(new ObservableOnSubscribe<List<Topic>>() {
             @Override
-            public void call(Subscriber<? super List<Topic>> subscriber) {
-                subscriber.onNext(getTopics(text));
+            public void subscribe(ObservableEmitter<List<Topic>> e) throws Exception {
+                e.onNext(getTopics(text));
             }
         }).subscribeOn(MainSchedulerProvider.INSTANCE.computation())
                 .observeOn(MainSchedulerProvider.INSTANCE.computation())
                 .subscribe(new Observer<List<Topic>>() {
                     @Override
-                    public void onCompleted() {
+                    public void onError(Throwable e) {
 
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onComplete() {
+
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
                     }
 
@@ -58,6 +65,7 @@ public enum SearchViewModel {
                         topicListSubject.onNext(topics);
                     }
                 });
+
 
 
     }
@@ -70,11 +78,11 @@ public enum SearchViewModel {
     }
 
     public Observable<List<Topic>> getTopicListSubjectAsObservable() {
-        return topicListSubject.asObservable();
+        return topicListSubject;
     }
 
     public Observable<Topic> getSelectedTopicSubjectAsObservable() {
-        return selectedTopicSubject.asObservable();
+        return selectedTopicSubject;
     }
 
     public void handleSelectedTopic(Context context, Topic topic) {

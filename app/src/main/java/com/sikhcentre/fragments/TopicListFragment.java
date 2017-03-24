@@ -21,8 +21,8 @@ import com.sikhcentre.viewmodel.SearchViewModel;
 
 import java.util.List;
 
-import rx.Observer;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by brinder.singh on 28/01/17.
@@ -33,7 +33,7 @@ public class TopicListFragment extends BaseFragment {
     private SikhCentreMediaPlayer sikhCentreMediaPlayer;
 
     @NonNull
-    private CompositeSubscription subscription;
+    private CompositeDisposable subscription;
 
     @NonNull
     private SearchViewModel searchViewModel;
@@ -91,39 +91,24 @@ public class TopicListFragment extends BaseFragment {
     }
 
     private void bind() {
-        subscription = new CompositeSubscription();
+        subscription = new CompositeDisposable();
 
         subscription.add(searchViewModel.getTopicListSubjectAsObservable()
                 .observeOn(schedulerProvider.ui())
-                .subscribe(new Observer<List<Topic>>() {
+                .subscribe(new Consumer<List<Topic>>() {
                     @Override
-                    public void onCompleted() {
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                    }
-
-                    @Override
-                    public void onNext(List<Topic> topics) {
+                    public void accept(@io.reactivex.annotations.NonNull List<Topic> topics) throws Exception {
                         topicListAdapter.setTopicList(topics);
                     }
+
                 }));
 
         subscription.add(searchViewModel.getSelectedTopicSubjectAsObservable()
                 .observeOn(schedulerProvider.ui())
-                .subscribe(new Observer<Topic>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+                .subscribe(new Consumer<Topic>() {
 
                     @Override
-                    public void onError(Throwable e) {
-                    }
-
-                    @Override
-                    public void onNext(Topic topic) {
-
+                    public void accept(@io.reactivex.annotations.NonNull Topic topic) throws Exception {
                         switch (topic.getTopicType()) {
                             case AUDIO:
                                 sikhCentreMediaPlayer.start(topic);
@@ -140,7 +125,7 @@ public class TopicListFragment extends BaseFragment {
     }
 
     private void unBind() {
-        subscription.unsubscribe();
+        subscription.dispose();
         sikhCentreMediaPlayer.unbind();
     }
 }

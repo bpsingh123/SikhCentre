@@ -15,8 +15,10 @@ import com.sikhcentre.models.MediaPlayerServiceModel;
 import com.sikhcentre.schedulers.MainSchedulerProvider;
 import com.sikhcentre.viewmodel.MediaPlayerViewModel;
 
-import rx.Observer;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by brinder.singh on 24/03/17.
@@ -27,7 +29,7 @@ public class SikhCentreMediaPlayer implements View.OnClickListener {
     private MediaPlayerViewModel mediaPlayerViewModel;
     private ImageView imageView;
     private SeekBar seekBar;
-    private CompositeSubscription compositeSubscription;
+    private CompositeDisposable compositeDisposable;
     private Activity context;
     private TextView durationTV;
     private Topic topic;
@@ -79,37 +81,32 @@ public class SikhCentreMediaPlayer implements View.OnClickListener {
     }
 
     public void bind() {
-        compositeSubscription = new CompositeSubscription();
-        compositeSubscription.add(mediaPlayerViewModel.getMediaPlayerServiceModelSubjectAsObservable()
+        compositeDisposable = new CompositeDisposable();
+
+        Disposable disposable = mediaPlayerViewModel
+                .getMediaPlayerServiceModelSubjectAsObservable()
                 .observeOn(MainSchedulerProvider.INSTANCE.ui())
-                .subscribe(new Observer<MediaPlayerServiceModel>() {
-                    @Override
-                    public void onCompleted() {
+                .subscribe(new Consumer<MediaPlayerServiceModel>() {
+                               @Override
+                               public void accept(@NonNull MediaPlayerServiceModel mediaPlayerServiceModel) throws Exception {
+                                   switch (action) {
+                                       case BUTTON_CLICK:
+                                           handleButtonClickAction(mediaPlayerServiceModel);
+                                           break;
+                                       case START:
+                                           handleStartAction(mediaPlayerServiceModel);
+                                           break;
+                                   }
+                               }
+                           }
+                );
 
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(MediaPlayerServiceModel mediaPlayerServiceModel) {
-                        switch (action) {
-                            case BUTTON_CLICK:
-                                handleButtonClickAction(mediaPlayerServiceModel);
-                                break;
-                            case START:
-                                handleStartAction(mediaPlayerServiceModel);
-                                break;
-                        }
-                    }
-                }));
+        compositeDisposable.add(disposable);
     }
 
     public void unbind() {
-        if (compositeSubscription != null) {
-            compositeSubscription.unsubscribe();
+        if (compositeDisposable != null) {
+            compositeDisposable.dispose();
         }
     }
 

@@ -20,8 +20,9 @@ import java.io.IOException;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import rx.Observer;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by brinder.singh on 19/03/17.
@@ -37,7 +38,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     public static final String ACTION_KEY = "ACTION";
     private MediaPlayer mediaPlayer;
     private WifiManager.WifiLock wifiLock;
-    private CompositeSubscription subscription;
+    private CompositeDisposable subscription;
     private static boolean isServiceRunning = false;
     private static ReadWriteLock lock = new ReentrantReadWriteLock();
     private MediaPlayerViewModel mediaPlayerViewModel;
@@ -90,22 +91,13 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
     private void bind() {
-        subscription = new CompositeSubscription();
+        subscription = new CompositeDisposable();
         subscription.add(mediaPlayerViewModel.getMediaPlayerModelSubjectAsObservable()
                 .observeOn(MainSchedulerProvider.INSTANCE.computation())
-                .subscribe(new Observer<MediaPlayerModel>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
+                .subscribe(new Consumer<MediaPlayerModel>() {
 
                     @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(MediaPlayerModel mediaPlayerModel) {
+                    public void accept(@NonNull MediaPlayerModel mediaPlayerModel) throws Exception {
                         try {
                             switch (mediaPlayerModel.getAction()) {
                                 case PLAY:
@@ -128,6 +120,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
                             Log.e(TAG, "onNext: ", e);
                         }
                     }
+
                 }));
     }
 
@@ -137,7 +130,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     public void unbind() {
         if (subscription != null) {
-            subscription.unsubscribe();
+            subscription.dispose();
         }
     }
 

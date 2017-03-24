@@ -5,8 +5,8 @@ import android.support.annotation.NonNull;
 import com.sikhcentre.models.MediaPlayerModel;
 import com.sikhcentre.models.MediaPlayerServiceModel;
 
-import rx.Observable;
-import rx.subjects.BehaviorSubject;
+import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
 
 /**
  * Created by brinder.singh on 24/03/17.
@@ -20,11 +20,11 @@ public enum MediaPlayerViewModel {
     private final BehaviorSubject<MediaPlayerServiceModel> mediaPlayerServiceModelBehaviorSubject = BehaviorSubject.create();
 
     public Observable<MediaPlayerModel> getMediaPlayerModelSubjectAsObservable() {
-        return mediaPlayerModelBehaviorSubject.asObservable();
+        return mediaPlayerModelBehaviorSubject;
     }
 
     public Observable<MediaPlayerServiceModel> getMediaPlayerServiceModelSubjectAsObservable() {
-        return mediaPlayerServiceModelBehaviorSubject.asObservable();
+        return mediaPlayerServiceModelBehaviorSubject;
     }
 
     public void handlePlayerAction(MediaPlayerModel mediaPlayerModel) {
