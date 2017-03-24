@@ -1,6 +1,7 @@
 package com.sikhcentre.viewmodel;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.sikhcentre.models.MediaPlayerModel;
 import com.sikhcentre.models.MediaPlayerServiceModel;
@@ -15,6 +16,8 @@ import rx.subjects.BehaviorSubject;
 public enum MediaPlayerViewModel {
     INSTANCE;
     @NonNull
+
+    public static final String TAG = "MediaPlayerViewModel";
 
     private final BehaviorSubject<MediaPlayerModel> mediaPlayerModelBehaviorSubject = BehaviorSubject.create();
     private final BehaviorSubject<MediaPlayerServiceModel> mediaPlayerServiceModelBehaviorSubject = BehaviorSubject.create();
@@ -32,6 +35,7 @@ public enum MediaPlayerViewModel {
     }
 
     public void handlePlayerServiceAction(MediaPlayerServiceModel mediaPlayerServiceModel) {
+        Log.d(TAG, "handlePlayerServiceAction: "+ mediaPlayerServiceModel);
         mediaPlayerServiceModelBehaviorSubject.onNext(mediaPlayerServiceModel);
     }
 

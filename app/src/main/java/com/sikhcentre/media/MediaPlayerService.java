@@ -106,6 +106,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
                     @Override
                     public void onNext(MediaPlayerModel mediaPlayerModel) {
+                        Log.d(TAG, "OnNext:" + mediaPlayerModel.getAction());
                         try {
                             switch (mediaPlayerModel.getAction()) {
                                 case PLAY:

@@ -2,6 +2,7 @@ package com.sikhcentre.utils;
 
 import android.app.Activity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -31,6 +32,8 @@ public class SikhCentreMediaPlayer implements View.OnClickListener {
     private Activity context;
     private TextView durationTV;
     private Topic topic;
+
+    public static final String TAG = "SikhCentreMediaPlayer";
 
     enum Action {
         START,
@@ -74,6 +77,7 @@ public class SikhCentreMediaPlayer implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
+        Log.d(TAG, "onClick:");
         action = Action.BUTTON_CLICK;
         mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel(MediaPlayerModel.Action.CHECK_STATUS, 0));
     }
@@ -95,6 +99,7 @@ public class SikhCentreMediaPlayer implements View.OnClickListener {
 
                     @Override
                     public void onNext(MediaPlayerServiceModel mediaPlayerServiceModel) {
+                        Log.d(TAG, "OnNext:" + mediaPlayerServiceModel + " " + action);
                         switch (action) {
                             case BUTTON_CLICK:
                                 handleButtonClickAction(mediaPlayerServiceModel);
@@ -129,5 +134,6 @@ public class SikhCentreMediaPlayer implements View.OnClickListener {
         mins = mins % 60;
         String time = String.format("%2d:%2d", hours, mins);
         durationTV.setText(time);
+        imageView.setImageResource(R.drawable.ic_pause_circle_outline_blue_900_24dp);
     }
 }
