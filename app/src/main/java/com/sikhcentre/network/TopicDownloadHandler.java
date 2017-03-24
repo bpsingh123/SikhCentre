@@ -70,28 +70,30 @@ public class TopicDownloadHandler {
                 topicTagList.add(new TopicTag(null, topicResponse.getId(), id));
             }
         }
-        Database database = null;
-        try {
-            database = DbUtils.INSTANCE.getDaoSession().getDatabase();
-            database.beginTransaction();
+        if (!topicList.isEmpty()) {
+            Database database = null;
+            try {
+                database = DbUtils.INSTANCE.getDaoSession().getDatabase();
+                database.beginTransaction();
 
-            DbUtils.INSTANCE.getDaoSession().getAuthorDao().deleteAll();
-            DbUtils.INSTANCE.getDaoSession().getTagDao().deleteAll();
-            DbUtils.INSTANCE.getDaoSession().getTopicDao().deleteAll();
-            DbUtils.INSTANCE.getDaoSession().getTopicAuthorDao().deleteAll();
-            DbUtils.INSTANCE.getDaoSession().getTopicTagDao().deleteAll();
+                DbUtils.INSTANCE.getDaoSession().getAuthorDao().deleteAll();
+                DbUtils.INSTANCE.getDaoSession().getTagDao().deleteAll();
+                DbUtils.INSTANCE.getDaoSession().getTopicDao().deleteAll();
+                DbUtils.INSTANCE.getDaoSession().getTopicAuthorDao().deleteAll();
+                DbUtils.INSTANCE.getDaoSession().getTopicTagDao().deleteAll();
 
-            DbUtils.INSTANCE.getDaoSession().getAuthorDao().insertInTx(authors);
-            DbUtils.INSTANCE.getDaoSession().getTagDao().insertInTx(tags);
-            DbUtils.INSTANCE.getDaoSession().getTopicDao().insertInTx(topicList);
-            DbUtils.INSTANCE.getDaoSession().getTopicAuthorDao().insertInTx(topicAuthorList);
-            DbUtils.INSTANCE.getDaoSession().getTopicTagDao().insertInTx(topicTagList);
+                DbUtils.INSTANCE.getDaoSession().getAuthorDao().insertInTx(authors);
+                DbUtils.INSTANCE.getDaoSession().getTagDao().insertInTx(tags);
+                DbUtils.INSTANCE.getDaoSession().getTopicDao().insertInTx(topicList);
+                DbUtils.INSTANCE.getDaoSession().getTopicAuthorDao().insertInTx(topicAuthorList);
+                DbUtils.INSTANCE.getDaoSession().getTopicTagDao().insertInTx(topicTagList);
 
-            database.setTransactionSuccessful();
-        } catch (Exception e) {
-            Log.e(TAG, "Exception while writing to DB", e);
-        } finally {
-            DbUtils.endTransaction(database);
+                database.setTransactionSuccessful();
+            } catch (Exception e) {
+                Log.e(TAG, "Exception while writing to DB", e);
+            } finally {
+                DbUtils.endTransaction(database);
+            }
         }
     }
 

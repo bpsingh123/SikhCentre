@@ -5,15 +5,18 @@ import com.sikhcentre.entities.Topic;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Getter;
+
 /**
  * Created by brinder.singh on 21/03/17.
  */
-
+@Getter
 public class Response {
     private List<TopicResponse> topics = new ArrayList<>();
     private List<AuthorResponse> authors = new ArrayList<>();
     private List<TagResponse> tags = new ArrayList<>();
 
+    @Getter
     public static class TopicResponse {
         private Long id;
         private String title;
@@ -22,31 +25,9 @@ public class Response {
         private List<Long> authorIds;
         private List<Long> tagIds;
 
-        public Long getId() {
-            return id;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-
-        public Topic.TopicType getType() {
-            return type;
-        }
-
-        public List<Long> getAuthorIds() {
-            return authorIds;
-        }
-
-        public List<Long> getTagIds() {
-            return tagIds;
-        }
     }
 
+    @Getter
     public static class AuthorResponse {
         private Long id;
         private String name;
@@ -60,28 +41,10 @@ public class Response {
         }
     }
 
+    @Getter
     public static class TagResponse {
         private Long id;
         private String name;
-
-        public Long getId() {
-            return id;
-        }
-
-        public String getName() {
-            return name;
-        }
     }
 
-    public List<TopicResponse> getTopics() {
-        return topics;
-    }
-
-    public List<AuthorResponse> getAuthors() {
-        return authors;
-    }
-
-    public List<TagResponse> getTags() {
-        return tags;
-    }
 }

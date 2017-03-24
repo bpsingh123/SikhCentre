@@ -11,10 +11,16 @@ import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.sikhcentre.models.MediaPlayerModel;
+import com.sikhcentre.models.MediaPlayerServiceModel;
+import com.sikhcentre.schedulers.MainSchedulerProvider;
+import com.sikhcentre.viewmodel.MediaPlayerViewModel;
+
 import java.io.IOException;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import rx.Observer;
 import rx.subscriptions.CompositeSubscription;
 
 /**
@@ -26,12 +32,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnInfoListener,
         MediaPlayer.OnSeekCompleteListener {
 
-    public enum Action {
-        PLAY,
-        PAUSE,
-        STOP
-    }
-
     public static final String TAG = "MediaPlayerService";
     public static final String MEDIA_RESOURCE_KEY = "AUDIO_RESOURCE";
     public static final String ACTION_KEY = "ACTION";
@@ -40,6 +40,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     private CompositeSubscription subscription;
     private static boolean isServiceRunning = false;
     private static ReadWriteLock lock = new ReentrantReadWriteLock();
+    private MediaPlayerViewModel mediaPlayerViewModel;
 
     @Nullable
     @Override
@@ -51,6 +52,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     public void onCreate() {
         super.onCreate();
         init();
+        mediaPlayerViewModel = MediaPlayerViewModel.INSTANCE;
     }
 
     @Override
@@ -58,24 +60,13 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         super.onStartCommand(intent, flags, startId);
         setServiceRunning(true);
         String url = intent.getStringExtra(MEDIA_RESOURCE_KEY);
-        Action action = (Action) intent.getSerializableExtra(ACTION_KEY);
         try {
-//            switch (action) {
-//                case PLAY:
-//                    start(url);
-//                    break;
-//                case STOP:
-//                    stop();
-//                    break;
-//                case PAUSE:
-//                    pause();
-//                    break;
-//            }
             start(url);
         } catch (Exception e) {
             Log.e(TAG, "Exception while playing starting media:" + e.getMessage(), e);
             stop();
         }
+        bind();
         return START_STICKY;
     }
 
@@ -83,6 +74,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     public void onDestroy() {
         super.onDestroy();
         stop();
+        unbind();
     }
 
     private void init() {
@@ -97,22 +89,70 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         mediaPlayer.setOnSeekCompleteListener(this);
     }
 
-    private void setupListener() {
+    private void bind() {
         subscription = new CompositeSubscription();
+        subscription.add(mediaPlayerViewModel.getMediaPlayerModelSubjectAsObservable()
+                .observeOn(MainSchedulerProvider.INSTANCE.computation())
+                .subscribe(new Observer<MediaPlayerModel>() {
+                    @Override
+                    public void onCompleted() {
 
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(MediaPlayerModel mediaPlayerModel) {
+                        try {
+                            switch (mediaPlayerModel.getAction()) {
+                                case PLAY:
+                                    play();
+                                    break;
+                                case STOP:
+                                    stop();
+                                    break;
+                                case PAUSE:
+                                    pause();
+                                    break;
+                                case CHECK_STATUS:
+                                    mediaPlayerViewModel.handlePlayerServiceAction(getMediaPlayerInfo(mediaPlayer));
+                                    break;
+                                case CHANGE:
+                                    start(mediaPlayerModel.getUrl());
+                                    break;
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "onNext: ", e);
+                        }
+                    }
+                }));
+    }
+
+    private MediaPlayerServiceModel getMediaPlayerInfo(MediaPlayer mediaPlayer) {
+        return new MediaPlayerServiceModel(mediaPlayer.isPlaying(), mediaPlayer.getDuration());
+    }
+
+    public void unbind() {
+        if (subscription != null) {
+            subscription.unsubscribe();
+        }
     }
 
     private void start(String url) throws IOException {
         if (url != null) {
             acquireWifiLock();
+            mediaPlayer.reset();
             mediaPlayer.setDataSource(url);
             mediaPlayer.prepareAsync();
-//            play();
         }
     }
 
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
+        mediaPlayerViewModel.handlePlayerServiceAction(getMediaPlayerInfo(mediaPlayer));
         play();
     }
 

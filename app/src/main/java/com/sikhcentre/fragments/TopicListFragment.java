@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +13,10 @@ import android.widget.AdapterView;
 
 import com.sikhcentre.R;
 import com.sikhcentre.adapters.TopicListAdapter;
-import com.sikhcentre.media.MediaPlayerService;
 import com.sikhcentre.entities.Topic;
 import com.sikhcentre.schedulers.ISchedulerProvider;
 import com.sikhcentre.schedulers.MainSchedulerProvider;
+import com.sikhcentre.utils.SikhCentreMediaPlayer;
 import com.sikhcentre.viewmodel.SearchViewModel;
 
 import java.util.List;
@@ -31,7 +30,7 @@ import rx.subscriptions.CompositeSubscription;
 
 public class TopicListFragment extends BaseFragment {
     private TopicListAdapter topicListAdapter;
-    private Toolbar audioToolbar;
+    private SikhCentreMediaPlayer sikhCentreMediaPlayer;
 
     @NonNull
     private CompositeSubscription subscription;
@@ -71,8 +70,7 @@ public class TopicListFragment extends BaseFragment {
                 layoutManager.getOrientation());
         topicRecyclerView.addItemDecoration(dividerItemDecoration);
 
-        audioToolbar = (Toolbar) getView().findViewById(R.id.toolbar_audio);
-        audioToolbar.setVisibility(View.GONE);
+        sikhCentreMediaPlayer = new SikhCentreMediaPlayer(getActivity(), R.id.toolbar_audio);
     }
 
     @Override
@@ -128,19 +126,21 @@ public class TopicListFragment extends BaseFragment {
 
                         switch (topic.getTopicType()) {
                             case AUDIO:
-                                audioToolbar.setVisibility(View.VISIBLE);
-                                MediaPlayerService.startMediaPlayer(getContext(), topic.getUrl());
+                                sikhCentreMediaPlayer.start(topic);
                                 break;
                             default:
-                                audioToolbar.setVisibility(View.GONE);
+                                sikhCentreMediaPlayer.stop();
                         }
 
                     }
                 }));
 
+        sikhCentreMediaPlayer.bind();
+
     }
 
     private void unBind() {
         subscription.unsubscribe();
+        sikhCentreMediaPlayer.unbind();
     }
 }
