@@ -1,7 +1,5 @@
 package com.sikhcentre.network;
 
-import android.util.Log;
-
 import com.google.gson.Gson;
 import com.sikhcentre.database.DbUtils;
 import com.sikhcentre.entities.Author;
@@ -14,6 +12,8 @@ import com.sikhcentre.schedulers.MainSchedulerProvider;
 import com.sikhcentre.utils.StringUtils;
 
 import org.greenrobot.greendao.database.Database;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -27,13 +27,14 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by brinder.singh on 21/03/17.
  */
 
 public class TopicDownloadHandler {
-    private static final String TAG = "TopicDownloadHandler";
+    private static final Logger LOGGER = LoggerFactory.getLogger(TopicDownloadHandler.class);
 
     private static Response downloadJson() {
         try {
@@ -41,11 +42,11 @@ public class TopicDownloadHandler {
             String str = StringUtils.toString(url.openStream());
             return new Gson().fromJson(str, Response.class);
         } catch (MalformedURLException e) {
-            Log.e(TAG, "Error while reading url", e);
+            LOGGER.error("Error while reading url", e);
         } catch (IOException e) {
-            Log.e(TAG, "Error while reading file", e);
+            LOGGER.error(TAG, "Error while reading file", e);
         } catch (Exception e) {
-            Log.e(TAG, "Error while populating data from URL", e);
+            LOGGER.error(TAG, "Error while populating data from URL", e);
         }
         return new Response();
     }
@@ -93,7 +94,7 @@ public class TopicDownloadHandler {
 
                 database.setTransactionSuccessful();
             } catch (Exception e) {
-                Log.e(TAG, "Exception while writing to DB", e);
+                LOGGER.error("Exception while writing to DB", e);
             } finally {
                 DbUtils.endTransaction(database);
             }
@@ -144,7 +145,7 @@ public class TopicDownloadHandler {
 
                                     @Override
                                     public void onComplete() {
-                                        Log.i(TAG, "I am done");
+                                        LOGGER.debug("I am done");
                                     }
 
                                     @Override

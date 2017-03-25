@@ -1,13 +1,14 @@
 package com.sikhcentre.database;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.sikhcentre.entities.DaoMaster;
 import com.sikhcentre.entities.DaoSession;
 
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.query.QueryBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by brinder.singh on 15/02/17.
@@ -15,7 +16,7 @@ import org.greenrobot.greendao.query.QueryBuilder;
 
 public enum DbUtils {
     INSTANCE;
-    private static final String TAG = "DbUtils";
+    private static final Logger LOGGER = LoggerFactory.getLogger(DbUtils.class);
     public static final String SIKH_CS_DB_NAME = "SikhCentreDB";
     private DaoSession daoSession;
 
@@ -34,7 +35,7 @@ public enum DbUtils {
     }
 
     public static void executeDML(String query, Object... params) throws Exception {
-        Log.i(TAG, "Executing query " + query);
+        LOGGER.info("Executing query {}", query);
         if (params.length != 0) {
             INSTANCE.getDaoSession().getDatabase().execSQL(query, params);
         } else {
@@ -48,7 +49,7 @@ public enum DbUtils {
                 database.endTransaction();
             }
         } catch (Exception e) {
-            Log.e(TAG, "Error in SQLiteDatabase endTransaction ", e);
+            LOGGER.error("Error in SQLiteDatabase endTransaction ", e);
         }
     }
 }

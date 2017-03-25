@@ -19,6 +19,9 @@ import com.sikhcentre.schedulers.MainSchedulerProvider;
 import com.sikhcentre.utils.SikhCentreMediaPlayer;
 import com.sikhcentre.viewmodel.SearchViewModel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 import io.reactivex.disposables.CompositeDisposable;
@@ -40,6 +43,8 @@ public class TopicListFragment extends BaseFragment {
 
     @NonNull
     ISchedulerProvider schedulerProvider = MainSchedulerProvider.INSTANCE;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TopicListFragment.class);
 
     @Nullable
     @Override
@@ -76,12 +81,14 @@ public class TopicListFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        LOGGER.debug("onResume");
         bind();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        LOGGER.debug("onPause");
         unBind();
     }
 
@@ -91,6 +98,8 @@ public class TopicListFragment extends BaseFragment {
     }
 
     private void bind() {
+        LOGGER.debug("bind");
+        unBind();
         subscription = new CompositeDisposable();
 
         subscription.add(searchViewModel.getTopicListSubjectAsObservable()
@@ -109,6 +118,7 @@ public class TopicListFragment extends BaseFragment {
 
                     @Override
                     public void accept(@io.reactivex.annotations.NonNull Topic topic) throws Exception {
+                        LOGGER.debug("accept: {}", topic.getTopicType());
                         switch (topic.getTopicType()) {
                             case AUDIO:
                                 sikhCentreMediaPlayer.start(topic);
@@ -125,7 +135,10 @@ public class TopicListFragment extends BaseFragment {
     }
 
     private void unBind() {
-        subscription.dispose();
-        sikhCentreMediaPlayer.unbind();
+        LOGGER.debug("unBind");
+        if (subscription != null) {
+            subscription.dispose();
+            sikhCentreMediaPlayer.unbind();
+        }
     }
 }

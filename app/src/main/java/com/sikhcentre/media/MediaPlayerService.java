@@ -16,6 +16,9 @@ import com.sikhcentre.models.MediaPlayerServiceModel;
 import com.sikhcentre.schedulers.MainSchedulerProvider;
 import com.sikhcentre.viewmodel.MediaPlayerViewModel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -23,6 +26,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
+
 
 /**
  * Created by brinder.singh on 19/03/17.
@@ -33,7 +37,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnInfoListener,
         MediaPlayer.OnSeekCompleteListener {
 
-    public static final String TAG = "MediaPlayerService";
+    private static final Logger LOGGER = LoggerFactory.getLogger(MediaPlayerService.class.getSimpleName());
     public static final String MEDIA_RESOURCE_KEY = "AUDIO_RESOURCE";
     public static final String ACTION_KEY = "ACTION";
     private MediaPlayer mediaPlayer;
@@ -60,11 +64,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         setServiceRunning(true);
-        String url = intent.getStringExtra(MEDIA_RESOURCE_KEY);
         try {
+            String url = intent.getStringExtra(MEDIA_RESOURCE_KEY);
             start(url);
         } catch (Exception e) {
-            Log.e(TAG, "Exception while playing starting media:" + e.getMessage(), e);
+            LOGGER.error("Exception while playing starting media:", e);
             stop();
         }
         bind();
@@ -91,6 +95,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
     private void bind() {
+        unbind();
         subscription = new CompositeDisposable();
         subscription.add(mediaPlayerViewModel.getMediaPlayerModelSubjectAsObservable()
                 .observeOn(MainSchedulerProvider.INSTANCE.computation())
@@ -98,6 +103,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
                     @Override
                     public void accept(@NonNull MediaPlayerModel mediaPlayerModel) throws Exception {
+                        LOGGER.debug("OnNext:{}",  mediaPlayerModel.getAction());
                         try {
                             switch (mediaPlayerModel.getAction()) {
                                 case PLAY:
@@ -117,7 +123,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
                                     break;
                             }
                         } catch (Exception e) {
-                            Log.e(TAG, "onNext: ", e);
+                            LOGGER.error("onNext: ", e);
                         }
                     }
 
@@ -225,13 +231,13 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     public static boolean startMediaPlayer(Context context, String url) {
         if (!isServiceRunning()) {
-            Log.i(TAG, "Starting Media Player:" + url);
+            LOGGER.info("Starting Media Player:{}", url);
             Intent intent = new Intent(context, MediaPlayerService.class);
             intent.putExtra(MEDIA_RESOURCE_KEY, url);
             context.startService(intent);
             return true;
         } else {
-            Log.i(TAG, "Media Player already running");
+            LOGGER.info("Media Player already running");
             return false;
         }
     }

@@ -5,6 +5,9 @@ import android.support.annotation.NonNull;
 import com.sikhcentre.models.MediaPlayerModel;
 import com.sikhcentre.models.MediaPlayerServiceModel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -16,6 +19,7 @@ public enum MediaPlayerViewModel {
     INSTANCE;
     @NonNull
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MediaPlayerViewModel.class);
     private final BehaviorSubject<MediaPlayerModel> mediaPlayerModelBehaviorSubject = BehaviorSubject.create();
     private final BehaviorSubject<MediaPlayerServiceModel> mediaPlayerServiceModelBehaviorSubject = BehaviorSubject.create();
 
@@ -32,6 +36,7 @@ public enum MediaPlayerViewModel {
     }
 
     public void handlePlayerServiceAction(MediaPlayerServiceModel mediaPlayerServiceModel) {
+        LOGGER.debug("handlePlayerServiceAction: ");
         mediaPlayerServiceModelBehaviorSubject.onNext(mediaPlayerServiceModel);
     }
 

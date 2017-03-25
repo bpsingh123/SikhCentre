@@ -13,10 +13,13 @@ import org.greenrobot.greendao.converter.PropertyConverter;
 
 import java.util.List;
 
+import lombok.ToString;
+
 /**
  * Created by brinder.singh on 31/12/16.
  */
 @Entity
+@ToString
 public class Topic {
     @Id
     private Long id;

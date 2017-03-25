@@ -1,11 +1,12 @@
 package com.sikhcentre.database.repositories;
 
-import android.util.Log;
-
 import com.sikhcentre.database.DbUtils;
 import com.sikhcentre.entities.Author;
 import com.sikhcentre.entities.AuthorDao;
 import com.sikhcentre.entities.Topic;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.Set;
  */
 
 public class AuthorRepository {
-    private static final String TAG = "TopicRepository";
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthorRepository.class);
 
     private AuthorRepository() {
     }
@@ -33,7 +34,7 @@ public class AuthorRepository {
             return topics;
 
         } catch (Exception e) {
-            Log.e(TAG, "getTopicSet:" + txt, e);
+            LOGGER.error( "getTopicSet:" + txt, e);
         }
         return new HashSet<>();
     }

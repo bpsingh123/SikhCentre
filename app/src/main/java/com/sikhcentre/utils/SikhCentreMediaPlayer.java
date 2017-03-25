@@ -15,9 +15,11 @@ import com.sikhcentre.models.MediaPlayerServiceModel;
 import com.sikhcentre.schedulers.MainSchedulerProvider;
 import com.sikhcentre.viewmodel.MediaPlayerViewModel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
 /**
@@ -33,14 +35,17 @@ public class SikhCentreMediaPlayer implements View.OnClickListener {
     private Activity context;
     private TextView durationTV;
     private Topic topic;
+    private static final Logger LOGGER = LoggerFactory.getLogger(SikhCentreMediaPlayer.class);
+
 
     enum Action {
+        NONE,
         START,
         BUTTON_CLICK,
         SEEK_BAR_MOVED
     }
 
-    private Action action;
+    private Action action = Action.NONE;
 
     public SikhCentreMediaPlayer(Activity context, int toolbarId) {
         this.context = context;
@@ -57,11 +62,13 @@ public class SikhCentreMediaPlayer implements View.OnClickListener {
     }
 
     public void start(Topic topic) {
+        LOGGER.debug("start: {}", topic);
         action = Action.START;
         audioToolbar.setVisibility(View.VISIBLE);
         bind();
 
         if (!MediaPlayerService.startMediaPlayer(context, topic.getUrl()) && !topic.equals(this.topic)) {
+            LOGGER.debug("start through event");
             mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel(MediaPlayerModel.Action.CHANGE, topic.getUrl()));
         }
 
@@ -76,19 +83,22 @@ public class SikhCentreMediaPlayer implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
+        LOGGER.debug("onClick");
         action = Action.BUTTON_CLICK;
         mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel(MediaPlayerModel.Action.CHECK_STATUS, 0));
     }
 
     public void bind() {
+        LOGGER.debug("bind");
+        unbind();
         compositeDisposable = new CompositeDisposable();
-
-        Disposable disposable = mediaPlayerViewModel
+        compositeDisposable.add(mediaPlayerViewModel
                 .getMediaPlayerServiceModelSubjectAsObservable()
                 .observeOn(MainSchedulerProvider.INSTANCE.ui())
                 .subscribe(new Consumer<MediaPlayerServiceModel>() {
                                @Override
                                public void accept(@NonNull MediaPlayerServiceModel mediaPlayerServiceModel) throws Exception {
+                                   LOGGER.debug("OnNext:{}", action);
                                    switch (action) {
                                        case BUTTON_CLICK:
                                            handleButtonClickAction(mediaPlayerServiceModel);
@@ -99,13 +109,13 @@ public class SikhCentreMediaPlayer implements View.OnClickListener {
                                    }
                                }
                            }
-                );
-
-        compositeDisposable.add(disposable);
+                ));
     }
 
     public void unbind() {
+        LOGGER.debug("unbind");
         if (compositeDisposable != null) {
+            LOGGER.debug("desposing");
             compositeDisposable.dispose();
         }
     }
@@ -126,5 +136,6 @@ public class SikhCentreMediaPlayer implements View.OnClickListener {
         mins = mins % 60;
         String time = String.format("%2d:%2d", hours, mins);
         durationTV.setText(time);
+        imageView.setImageResource(R.drawable.ic_pause_circle_outline_blue_900_24dp);
     }
 }

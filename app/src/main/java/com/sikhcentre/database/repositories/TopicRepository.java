@@ -1,10 +1,11 @@
 package com.sikhcentre.database.repositories;
 
-import android.util.Log;
-
 import com.sikhcentre.database.DbUtils;
 import com.sikhcentre.entities.Topic;
 import com.sikhcentre.entities.TopicDao;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
  */
 
 public class TopicRepository {
-    private static final String TAG = "TopicRepository";
+    private static final Logger LOGGER = LoggerFactory.getLogger(TopicRepository.class);
 
     private TopicRepository() {
     }
@@ -34,7 +35,7 @@ public class TopicRepository {
                     .where(TopicDao.Properties.Title.like("%" + txt + "%"))
                     .list();
         } catch (Exception e) {
-            Log.e(TAG, "getTopicList:" + txt, e);
+            LOGGER.error("getTopicList:" + txt, e);
         }
         return new ArrayList<>();
     }
