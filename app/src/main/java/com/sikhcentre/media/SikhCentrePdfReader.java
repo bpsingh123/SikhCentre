@@ -54,15 +54,6 @@ public enum SikhCentrePdfReader {
                 }
             });
         }
-//        Observable.create(new ObservableOnSubscribe<Response>() {
-//            @Override
-//            public void subscribe(ObservableEmitter<Response> e) throws Exception {
-////                e.onNext(downloadJson());
-//            }
-//
-//        }).subscribeOn(MainSchedulerProvider.INSTANCE.computation())
-//                .observeOn(MainSchedulerProvider.INSTANCE.computation())
-//                .subscribe();
     }
 
     private void openPdfFile(Activity activity, String fileUrl) {
@@ -70,11 +61,14 @@ public enum SikhCentrePdfReader {
         Intent pdfIntent = new Intent(Intent.ACTION_VIEW);
         pdfIntent.setDataAndType(path, "application/pdf");
         pdfIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
         try{
             activity.startActivity(pdfIntent);
         }catch(ActivityNotFoundException e){
+            LOGGER.error("No Application available to view PDF", e);
             Toast.makeText(activity, "No Application available to view PDF", Toast.LENGTH_SHORT).show();
+        }catch (Exception e){
+            LOGGER.error("Error while opening PDF", e);
+            Toast.makeText(activity, "Error while opening PDFs", Toast.LENGTH_SHORT).show();
         }
     }
 }
