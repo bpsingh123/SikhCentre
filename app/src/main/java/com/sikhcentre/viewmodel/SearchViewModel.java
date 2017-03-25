@@ -19,7 +19,7 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.PublishSubject;
 
 /**
  * Created by brinder.singh on 28/01/17.
@@ -29,10 +29,10 @@ public enum SearchViewModel {
     INSTANCE;
 
     @NonNull
-    private final BehaviorSubject<List<Topic>> topicListSubject = BehaviorSubject.create();
+    private final PublishSubject<List<Topic>> topicListSubject = PublishSubject.create().create();
 
     @NonNull
-    private final BehaviorSubject<Topic> selectedTopicSubject = BehaviorSubject.create();
+    private final PublishSubject<Topic> selectedTopicSubject = PublishSubject.create();
 
     ISchedulerProvider schedulerProvider = MainSchedulerProvider.INSTANCE;
 

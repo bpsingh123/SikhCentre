@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.reactivex.Observable;
-import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.PublishSubject;
 
 /**
  * Created by brinder.singh on 24/03/17.
@@ -20,24 +20,24 @@ public enum MediaPlayerViewModel {
     @NonNull
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MediaPlayerViewModel.class);
-    private final BehaviorSubject<MediaPlayerModel> mediaPlayerModelBehaviorSubject = BehaviorSubject.create();
-    private final BehaviorSubject<MediaPlayerServiceModel> mediaPlayerServiceModelBehaviorSubject = BehaviorSubject.create();
+    private final PublishSubject<MediaPlayerModel> mediaPlayerModelSubject = PublishSubject.create();
+    private final PublishSubject<MediaPlayerServiceModel> mediaPlayerServiceModelSubject = PublishSubject.create();
 
     public Observable<MediaPlayerModel> getMediaPlayerModelSubjectAsObservable() {
-        return mediaPlayerModelBehaviorSubject;
+        return mediaPlayerModelSubject;
     }
 
     public Observable<MediaPlayerServiceModel> getMediaPlayerServiceModelSubjectAsObservable() {
-        return mediaPlayerServiceModelBehaviorSubject;
+        return mediaPlayerServiceModelSubject;
     }
 
     public void handlePlayerAction(MediaPlayerModel mediaPlayerModel) {
-        mediaPlayerModelBehaviorSubject.onNext(mediaPlayerModel);
+        mediaPlayerModelSubject.onNext(mediaPlayerModel);
     }
 
     public void handlePlayerServiceAction(MediaPlayerServiceModel mediaPlayerServiceModel) {
         LOGGER.debug("handlePlayerServiceAction: ");
-        mediaPlayerServiceModelBehaviorSubject.onNext(mediaPlayerServiceModel);
+        mediaPlayerServiceModelSubject.onNext(mediaPlayerServiceModel);
     }
 
 }

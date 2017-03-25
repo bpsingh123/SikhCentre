@@ -33,8 +33,8 @@ import static android.content.ContentValues.TAG;
  * Created by brinder.singh on 21/03/17.
  */
 
-public class TopicDownloadHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TopicDownloadHandler.class);
+public class TopicMetadataDownloadHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TopicMetadataDownloadHandler.class);
 
     private static Response downloadJson() {
         try {

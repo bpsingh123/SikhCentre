@@ -14,9 +14,10 @@ import android.widget.AdapterView;
 import com.sikhcentre.R;
 import com.sikhcentre.adapters.TopicListAdapter;
 import com.sikhcentre.entities.Topic;
+import com.sikhcentre.media.SikhCentrePdfReader;
 import com.sikhcentre.schedulers.ISchedulerProvider;
 import com.sikhcentre.schedulers.MainSchedulerProvider;
-import com.sikhcentre.utils.SikhCentreMediaPlayer;
+import com.sikhcentre.media.SikhCentreMediaPlayer;
 import com.sikhcentre.viewmodel.SearchViewModel;
 
 import org.slf4j.Logger;
@@ -123,6 +124,8 @@ public class TopicListFragment extends BaseFragment {
                             case AUDIO:
                                 sikhCentreMediaPlayer.start(topic);
                                 break;
+                            case PDF:
+                                SikhCentrePdfReader.INSTANCE.handlePdfTopic(getActivity(), topic);
                             default:
                                 sikhCentreMediaPlayer.stop();
                         }

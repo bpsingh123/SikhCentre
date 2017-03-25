@@ -209,7 +209,9 @@ public class Topic {
         @SerializedName("3")
         AUDIO(3),
         @SerializedName("4")
-        VIDEO(4);
+        VIDEO(4),
+        @SerializedName("5")
+        PDF(5);
         final int id;
 
         TopicType(int id) {
@@ -262,7 +264,7 @@ public class Topic {
                 authorStr.append(author.getName());
                 authorStr.append(", ");
             }
-            return authorStr.substring(0, authorStr.length()-2);
+            return authorStr.substring(0, authorStr.length() - 2);
         }
         return "";
     }
@@ -275,7 +277,7 @@ public class Topic {
                 tagStr.append(tag.getName());
                 tagStr.append(", ");
             }
-            return tagStr.substring(0, tagStr.length()-2);
+            return tagStr.substring(0, tagStr.length() - 2);
         }
         return "";
     }

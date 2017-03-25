@@ -4,7 +4,7 @@ import android.app.Application;
 import android.support.annotation.NonNull;
 
 import com.sikhcentre.database.DbUtils;
-import com.sikhcentre.network.TopicDownloadHandler;
+import com.sikhcentre.network.TopicMetadataDownloadHandler;
 import com.sikhcentre.schedulers.ISchedulerProvider;
 import com.sikhcentre.schedulers.MainSchedulerProvider;
 
@@ -18,7 +18,7 @@ public class SikhCentreApplication extends Application {
     public void onCreate() {
         super.onCreate();
         initialize();
-        TopicDownloadHandler.fetchData();
+        TopicMetadataDownloadHandler.fetchData();
     }
 
     @NonNull

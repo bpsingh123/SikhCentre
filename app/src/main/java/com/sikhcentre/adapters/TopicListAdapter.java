@@ -72,6 +72,7 @@ public class TopicListAdapter extends RecyclerView.Adapter<TopicListAdapter.Topi
             topicTypeIconMap.put(Topic.TopicType.TEXT, R.drawable.ic_text_format_blue_900_24dp);
             topicTypeIconMap.put(Topic.TopicType.AUDIO, R.drawable.ic_audiotrack_blue_900_24dp);
             topicTypeIconMap.put(Topic.TopicType.VIDEO, R.drawable.ic_music_video_blue_900_24dp);
+            topicTypeIconMap.put(Topic.TopicType.PDF, R.drawable.ic_picture_as_pdf_blue_900_24dp);
         }
 
         TopicListViewHolder(View itemView, AdapterView.OnItemClickListener onItemClickListener) {

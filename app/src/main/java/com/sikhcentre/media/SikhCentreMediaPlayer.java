@@ -1,4 +1,4 @@
-package com.sikhcentre.utils;
+package com.sikhcentre.media;
 
 import android.app.Activity;
 import android.support.v7.widget.Toolbar;
@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.sikhcentre.R;
 import com.sikhcentre.entities.Topic;
-import com.sikhcentre.media.MediaPlayerService;
 import com.sikhcentre.models.MediaPlayerModel;
 import com.sikhcentre.models.MediaPlayerServiceModel;
 import com.sikhcentre.schedulers.MainSchedulerProvider;
