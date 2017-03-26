@@ -3,11 +3,12 @@ package com.sikhcentre.network;
 import com.google.gson.Gson;
 import com.sikhcentre.database.DbUtils;
 import com.sikhcentre.entities.Author;
+import com.sikhcentre.entities.RelatedTopic;
 import com.sikhcentre.entities.Tag;
 import com.sikhcentre.entities.Topic;
 import com.sikhcentre.entities.TopicAuthor;
 import com.sikhcentre.entities.TopicTag;
-import com.sikhcentre.models.Response;
+import com.sikhcentre.models.MetaDataResponse;
 import com.sikhcentre.schedulers.MainSchedulerProvider;
 import com.sikhcentre.utils.StringUtils;
 
@@ -36,11 +37,11 @@ import static android.content.ContentValues.TAG;
 public class TopicMetadataDownloadHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(TopicMetadataDownloadHandler.class);
 
-    private static Response downloadJson() {
+    private static MetaDataResponse downloadJson() {
         try {
             URL url = new URL("https://dl.dropboxusercontent.com/s/b0puce7rrpxkpjh/response.json");
             String str = StringUtils.toString(url.openStream());
-            return new Gson().fromJson(str, Response.class);
+            return new Gson().fromJson(str, MetaDataResponse.class);
         } catch (MalformedURLException e) {
             LOGGER.error("Error while reading url", e);
         } catch (IOException e) {
@@ -48,31 +49,38 @@ public class TopicMetadataDownloadHandler {
         } catch (Exception e) {
             LOGGER.error(TAG, "Error while populating data from URL", e);
         }
-        return new Response();
+        return new MetaDataResponse();
     }
 
-    private static void processTopicDownload(Response response) {
+    private static void processTopicDownload(MetaDataResponse metaDataResponse) {
         List<Author> authors = new ArrayList<>();
         List<Tag> tags = new ArrayList<>();
         List<TopicAuthor> topicAuthorList = new ArrayList<>();
         List<TopicTag> topicTagList = new ArrayList<>();
         List<Topic> topicList = new ArrayList<>();
+        List<RelatedTopic> relatedTopicList = new ArrayList<>();
 
-        for (Response.AuthorResponse authorResponse : response.getAuthors()) {
+        for (MetaDataResponse.AuthorResponse authorResponse : metaDataResponse.getAuthors()) {
             authors.add(new Author(authorResponse.getId(), authorResponse.getName()));
         }
-        for (Response.TagResponse tagResponse : response.getTags()) {
+        for (MetaDataResponse.TagResponse tagResponse : metaDataResponse.getTags()) {
             tags.add(new Tag(tagResponse.getId(), tagResponse.getName()));
         }
-        for (Response.TopicResponse topicResponse : response.getTopics()) {
+        for (MetaDataResponse.TopicResponse topicResponse : metaDataResponse.getTopics()) {
             topicList.add(new Topic(topicResponse.getId(), topicResponse.getTitle(),
                     topicResponse.getUrl(), topicResponse.getType()));
             for (Long id : topicResponse.getAuthorIds()) {
                 topicAuthorList.add(new TopicAuthor(null, topicResponse.getId(), id));
             }
-            for (Long id : topicResponse.getTagIds()) {
-                topicTagList.add(new TopicTag(null, topicResponse.getId(), id));
+            for (MetaDataResponse.TopicTagResponse topicTagResponse : topicResponse.getTags()) {
+                topicTagList.add(new TopicTag(null, topicResponse.getId(), topicTagResponse.getTagId(), topicTagResponse.getWeight()));
             }
+            for (MetaDataResponse.RelatedTopicResponse relatedTopicResponse : topicResponse.getRelatedTopics()) {
+                if (!topicResponse.getId().equals(relatedTopicResponse.getTopicId())) {
+                    relatedTopicList.add(new RelatedTopic(null, topicResponse.getId(), relatedTopicResponse.getTopicId(), relatedTopicResponse.getWeight()));
+                }
+            }
+
         }
         if (!topicList.isEmpty()) {
             Database database = null;
@@ -85,12 +93,14 @@ public class TopicMetadataDownloadHandler {
                 DbUtils.INSTANCE.getDaoSession().getTopicDao().deleteAll();
                 DbUtils.INSTANCE.getDaoSession().getTopicAuthorDao().deleteAll();
                 DbUtils.INSTANCE.getDaoSession().getTopicTagDao().deleteAll();
+                DbUtils.INSTANCE.getDaoSession().getRelatedTopicDao().deleteAll();
 
                 DbUtils.INSTANCE.getDaoSession().getAuthorDao().insertInTx(authors);
                 DbUtils.INSTANCE.getDaoSession().getTagDao().insertInTx(tags);
                 DbUtils.INSTANCE.getDaoSession().getTopicDao().insertInTx(topicList);
                 DbUtils.INSTANCE.getDaoSession().getTopicAuthorDao().insertInTx(topicAuthorList);
                 DbUtils.INSTANCE.getDaoSession().getTopicTagDao().insertInTx(topicTagList);
+                DbUtils.INSTANCE.getDaoSession().getRelatedTopicDao().insertInTx(relatedTopicList);
 
                 database.setTransactionSuccessful();
             } catch (Exception e) {
@@ -102,15 +112,15 @@ public class TopicMetadataDownloadHandler {
     }
 
     public static void fetchData() {
-        Observable.create(new ObservableOnSubscribe<Response>() {
+        Observable.create(new ObservableOnSubscribe<MetaDataResponse>() {
             @Override
-            public void subscribe(ObservableEmitter<Response> e) throws Exception {
+            public void subscribe(ObservableEmitter<MetaDataResponse> e) throws Exception {
                 e.onNext(downloadJson());
             }
 
         }).subscribeOn(MainSchedulerProvider.INSTANCE.computation())
                 .observeOn(MainSchedulerProvider.INSTANCE.computation())
-                .subscribe(new Observer<Response>() {
+                .subscribe(new Observer<MetaDataResponse>() {
                     @Override
                     public void onError(Throwable e) {
 
@@ -127,11 +137,11 @@ public class TopicMetadataDownloadHandler {
                     }
 
                     @Override
-                    public void onNext(final Response response) {
+                    public void onNext(final MetaDataResponse metaDataResponse) {
                         Observable.create(new ObservableOnSubscribe<Void>() {
                             @Override
                             public void subscribe(ObservableEmitter<Void> e) throws Exception {
-                                processTopicDownload(response);
+                                processTopicDownload(metaDataResponse);
                                 e.onComplete();
                             }
 

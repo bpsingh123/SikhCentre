@@ -89,7 +89,7 @@ public class TopicListAdapter extends RecyclerView.Adapter<TopicListAdapter.Topi
         void bindTopic(Topic topic) {
             title.setText(topic.getTitle());
             author.setText(topic.getAuthorString());
-            tags.setText(topic.getTagString());
+//            tags.setText(topic.getTagString());
             imageViewType.setImageResource(topicTypeIconMap.get(topic.getTopicType()));
         }
 

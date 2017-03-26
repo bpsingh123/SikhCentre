@@ -11,7 +11,7 @@ import lombok.Getter;
  * Created by brinder.singh on 21/03/17.
  */
 @Getter
-public class Response {
+public class MetaDataResponse {
     private List<TopicResponse> topics = new ArrayList<>();
     private List<AuthorResponse> authors = new ArrayList<>();
     private List<TagResponse> tags = new ArrayList<>();
@@ -22,23 +22,28 @@ public class Response {
         private String title;
         private String url;
         private Topic.TopicType type;
-        private List<Long> authorIds;
-        private List<Long> tagIds;
+        private List<Long> authorIds = new ArrayList<>();
+        private List<TopicTagResponse> tags = new ArrayList<>();
+        private List<RelatedTopicResponse> relatedTopics = new ArrayList<>();
 
+    }
+
+    @Getter
+    public static class RelatedTopicResponse {
+        private Long topicId;
+        private Double weight;
+    }
+
+    @Getter
+    public static class TopicTagResponse {
+        private Long tagId;
+        private Double weight;
     }
 
     @Getter
     public static class AuthorResponse {
         private Long id;
         private String name;
-
-        public Long getId() {
-            return id;
-        }
-
-        public String getName() {
-            return name;
-        }
     }
 
     @Getter

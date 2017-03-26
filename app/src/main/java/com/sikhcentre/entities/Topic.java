@@ -8,12 +8,14 @@ import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.JoinEntity;
+import org.greenrobot.greendao.annotation.OrderBy;
 import org.greenrobot.greendao.annotation.ToMany;
 import org.greenrobot.greendao.converter.PropertyConverter;
 
 import java.util.List;
 
 import lombok.ToString;
+
 
 /**
  * Created by brinder.singh on 31/12/16.
@@ -39,12 +41,19 @@ public class Topic {
 
     @ToMany
     @JoinEntity(
-            entity = TopicTag.class,
+            entity = TopicReference.class,
             sourceProperty = "topicId",
-            targetProperty = "tagId"
+            targetProperty = "referenceId"
     )
-    private List<Tag> tags;
+    private List<Reference> references;
 
+    @ToMany(referencedJoinProperty = "topicId")
+    @OrderBy("weight DESC")
+    private List<TopicTag> topicTags;
+
+    @ToMany(referencedJoinProperty = "topicId")
+    @OrderBy("weight DESC")
+    private List<RelatedTopic> relatedTopics;
 
     /**
      * Used to resolve relations
@@ -121,36 +130,6 @@ public class Topic {
             throw new DaoException("Entity is detached from DAO context");
         }
         myDao.update(this);
-    }
-
-    /**
-     * To-many relationship, resolved on first access (and after reset).
-     * Changes to to-many relations are not persisted, make changes to the target entity.
-     */
-    @Generated(hash = 90582728)
-    public List<Tag> getTags() {
-        if (tags == null) {
-            final DaoSession daoSession = this.daoSession;
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
-            TagDao targetDao = daoSession.getTagDao();
-            List<Tag> tagsNew = targetDao._queryTopic_Tags(id);
-            synchronized (this) {
-                if (tags == null) {
-                    tags = tagsNew;
-                }
-            }
-        }
-        return tags;
-    }
-
-    /**
-     * Resets a to-many relationship, making the next get call to query for a fresh result.
-     */
-    @Generated(hash = 404234)
-    public synchronized void resetTags() {
-        tags = null;
     }
 
     public TopicType getTopicType() {
@@ -269,17 +248,101 @@ public class Topic {
         return "";
     }
 
-    public String getTagString() {
-        List<Tag> Tags = getTags();
-        if (Tags != null) {
-            StringBuilder tagStr = new StringBuilder();
-            for (Tag tag : Tags) {
-                tagStr.append(tag.getName());
-                tagStr.append(", ");
+//    public String getTagString() {
+//        List<Tag> Tags = getTags();
+//        if (Tags != null) {
+//            StringBuilder tagStr = new StringBuilder();
+//            for (Tag tag : Tags) {
+//                tagStr.append(tag.getName());
+//                tagStr.append(", ");
+//            }
+//            return tagStr.substring(0, tagStr.length() - 2);
+//        }
+//        return "";
+//    }
+
+    /**
+     * To-many relationship, resolved on first access (and after reset).
+     * Changes to to-many relations are not persisted, make changes to the target entity.
+     */
+    @Generated(hash = 1296712280)
+    public List<TopicTag> getTopicTags() {
+        if (topicTags == null) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
             }
-            return tagStr.substring(0, tagStr.length() - 2);
+            TopicTagDao targetDao = daoSession.getTopicTagDao();
+            List<TopicTag> topicTagsNew = targetDao._queryTopic_TopicTags(id);
+            synchronized (this) {
+                if (topicTags == null) {
+                    topicTags = topicTagsNew;
+                }
+            }
         }
-        return "";
+        return topicTags;
+    }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    @Generated(hash = 7070170)
+    public synchronized void resetTopicTags() {
+        topicTags = null;
+    }
+
+    /**
+     * To-many relationship, resolved on first access (and after reset).
+     * Changes to to-many relations are not persisted, make changes to the target entity.
+     */
+    @Generated(hash = 1152752378)
+    public List<RelatedTopic> getRelatedTopics() {
+        if (relatedTopics == null) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            RelatedTopicDao targetDao = daoSession.getRelatedTopicDao();
+            List<RelatedTopic> relatedTopicsNew = targetDao._queryTopic_RelatedTopics(id);
+            synchronized (this) {
+                if (relatedTopics == null) {
+                    relatedTopics = relatedTopicsNew;
+                }
+            }
+        }
+        return relatedTopics;
+    }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    @Generated(hash = 588647111)
+    public synchronized void resetRelatedTopics() {
+        relatedTopics = null;
+    }
+
+    /**
+     * To-many relationship, resolved on first access (and after reset).
+     * Changes to to-many relations are not persisted, make changes to the target entity.
+     */
+    @Generated(hash = 1111704743)
+    public List<Reference> getReferences() {
+        if (references == null) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            ReferenceDao targetDao = daoSession.getReferenceDao();
+            List<Reference> referencesNew = targetDao._queryTopic_References(id);
+            synchronized (this) {
+                if (references == null) {
+                    references = referencesNew;
+                }
+            }
+        }
+        return references;
+    }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    @Generated(hash = 932734098)
+    public synchronized void resetReferences() {
+        references = null;
     }
 
     /** called by internal mechanisms, do not call yourself. */

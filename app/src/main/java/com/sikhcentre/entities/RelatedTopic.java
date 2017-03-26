@@ -7,100 +7,61 @@ import org.greenrobot.greendao.annotation.ToOne;
 import org.greenrobot.greendao.DaoException;
 
 /**
- * Created by brinder.singh on 31/12/16.
+ * Created by brinder.singh on 26/03/17.
  */
 @Entity
-public class TopicTag {
+public class RelatedTopic {
     @Id(autoincrement = true)
     private Long id;
     private Long topicId;
-    private Long tagId;
+    private Long relatedTopicId;
     private Double weight;
 
-    @ToOne(joinProperty = "topicId")
-    private Topic topic;
+    @ToOne(joinProperty = "relatedTopicId")
+    private Topic relatedTopic;
     /** Used to resolve relations */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
     /** Used for active entity operations. */
-    @Generated(hash = 662370100)
-    private transient TopicTagDao myDao;
-    @Generated(hash = 2135967171)
-    private transient Long topic__resolvedKey;
+    @Generated(hash = 1912718555)
+    private transient RelatedTopicDao myDao;
+    @Generated(hash = 1660454596)
+    private transient Long relatedTopic__resolvedKey;
 
-    @Generated(hash = 694071312)
-    public TopicTag(Long id, Long topicId, Long tagId, Double weight) {
+    @Generated(hash = 146970062)
+    public RelatedTopic(Long id, Long topicId, Long relatedTopicId, Double weight) {
         this.id = id;
         this.topicId = topicId;
-        this.tagId = tagId;
+        this.relatedTopicId = relatedTopicId;
         this.weight = weight;
     }
-
-    @Generated(hash = 588083404)
-    public TopicTag() {
+    @Generated(hash = 1341454251)
+    public RelatedTopic() {
     }
-
     public Long getId() {
         return this.id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
-
     public Long getTopicId() {
         return this.topicId;
     }
-
     public void setTopicId(Long topicId) {
         this.topicId = topicId;
     }
-
-    public Long getTagId() {
-        return this.tagId;
-    }
-
-    public void setTagId(Long tagId) {
-        this.tagId = tagId;
-    }
-
     public Double getWeight() {
         return this.weight;
     }
-
     public void setWeight(Double weight) {
         this.weight = weight;
     }
-
-    /** To-one relationship, resolved on first access. */
-    @Generated(hash = 150653431)
-    public Topic getTopic() {
-        Long __key = this.topicId;
-        if (topic__resolvedKey == null || !topic__resolvedKey.equals(__key)) {
-            final DaoSession daoSession = this.daoSession;
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
-            TopicDao targetDao = daoSession.getTopicDao();
-            Topic topicNew = targetDao.load(__key);
-            synchronized (this) {
-                topic = topicNew;
-                topic__resolvedKey = __key;
-            }
-        }
-        return topic;
+    public Long getRelatedTopicId() {
+        return this.relatedTopicId;
     }
-
-    /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 2139073858)
-    public void setTopic(Topic topic) {
-        synchronized (this) {
-            this.topic = topic;
-            topicId = topic == null ? null : topic.getId();
-            topic__resolvedKey = topicId;
-        }
+    public void setRelatedTopicId(Long relatedTopicId) {
+        this.relatedTopicId = relatedTopicId;
     }
-
     /**
      * Convenient call for {@link org.greenrobot.greendao.AbstractDao#delete(Object)}.
      * Entity must attached to an entity context.
@@ -112,7 +73,6 @@ public class TopicTag {
         }
         myDao.delete(this);
     }
-
     /**
      * Convenient call for {@link org.greenrobot.greendao.AbstractDao#refresh(Object)}.
      * Entity must attached to an entity context.
@@ -124,7 +84,6 @@ public class TopicTag {
         }
         myDao.refresh(this);
     }
-
     /**
      * Convenient call for {@link org.greenrobot.greendao.AbstractDao#update(Object)}.
      * Entity must attached to an entity context.
@@ -136,11 +95,37 @@ public class TopicTag {
         }
         myDao.update(this);
     }
-
+    /** To-one relationship, resolved on first access. */
+    @Generated(hash = 2092850619)
+    public Topic getRelatedTopic() {
+        Long __key = this.relatedTopicId;
+        if (relatedTopic__resolvedKey == null || !relatedTopic__resolvedKey.equals(__key)) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            TopicDao targetDao = daoSession.getTopicDao();
+            Topic relatedTopicNew = targetDao.load(__key);
+            synchronized (this) {
+                relatedTopic = relatedTopicNew;
+                relatedTopic__resolvedKey = __key;
+            }
+        }
+        return relatedTopic;
+    }
     /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 2075354250)
+    @Generated(hash = 208274377)
+    public void setRelatedTopic(Topic relatedTopic) {
+        synchronized (this) {
+            this.relatedTopic = relatedTopic;
+            relatedTopicId = relatedTopic == null ? null : relatedTopic.getId();
+            relatedTopic__resolvedKey = relatedTopicId;
+        }
+    }
+    /** called by internal mechanisms, do not call yourself. */
+    @Generated(hash = 377443740)
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
-        myDao = daoSession != null ? daoSession.getTopicTagDao() : null;
+        myDao = daoSession != null ? daoSession.getRelatedTopicDao() : null;
     }
 }
