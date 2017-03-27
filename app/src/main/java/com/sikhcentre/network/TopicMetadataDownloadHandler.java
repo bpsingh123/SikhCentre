@@ -1,6 +1,11 @@
 package com.sikhcentre.network;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.widget.Toast;
+
 import com.google.gson.Gson;
+import com.sikhcentre.R;
 import com.sikhcentre.database.DbUtils;
 import com.sikhcentre.entities.Author;
 import com.sikhcentre.entities.RelatedTopic;
@@ -11,6 +16,7 @@ import com.sikhcentre.entities.TopicTag;
 import com.sikhcentre.models.MetaDataResponse;
 import com.sikhcentre.schedulers.MainSchedulerProvider;
 import com.sikhcentre.utils.StringUtils;
+import com.sikhcentre.utils.UIUtils;
 
 import org.greenrobot.greendao.database.Database;
 import org.slf4j.Logger;
@@ -37,19 +43,21 @@ import static android.content.ContentValues.TAG;
 public class TopicMetadataDownloadHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(TopicMetadataDownloadHandler.class);
 
-    private static MetaDataResponse downloadJson() {
+    private static MetaDataResponse downloadJson() throws Exception {
         try {
             URL url = new URL("https://dl.dropboxusercontent.com/s/b0puce7rrpxkpjh/response.json");
             String str = StringUtils.toString(url.openStream());
             return new Gson().fromJson(str, MetaDataResponse.class);
         } catch (MalformedURLException e) {
             LOGGER.error("Error while reading url", e);
+            throw e;
         } catch (IOException e) {
             LOGGER.error(TAG, "Error while reading file", e);
+            throw e;
         } catch (Exception e) {
             LOGGER.error(TAG, "Error while populating data from URL", e);
+            throw e;
         }
-        return new MetaDataResponse();
     }
 
     private static void processTopicDownload(MetaDataResponse metaDataResponse) {
@@ -111,7 +119,10 @@ public class TopicMetadataDownloadHandler {
         }
     }
 
-    public static void fetchData() {
+    public static void fetchData(final Context context) {
+        final ProgressDialog progressDialog = UIUtils.showProgressBar(context,
+                context.getString(R.string.loading_indicator_title),
+                context.getString(R.string.loading_indicator_loading_metadata_text));
         Observable.create(new ObservableOnSubscribe<MetaDataResponse>() {
             @Override
             public void subscribe(ObservableEmitter<MetaDataResponse> e) throws Exception {
@@ -119,11 +130,12 @@ public class TopicMetadataDownloadHandler {
             }
 
         }).subscribeOn(MainSchedulerProvider.INSTANCE.computation())
-                .observeOn(MainSchedulerProvider.INSTANCE.computation())
+                .observeOn(MainSchedulerProvider.INSTANCE.ui())
                 .subscribe(new Observer<MetaDataResponse>() {
                     @Override
                     public void onError(Throwable e) {
-
+                        LOGGER.error("Error while downloading metadata", e);
+                        handleError(context, progressDialog);
                     }
 
                     @Override
@@ -145,17 +157,20 @@ public class TopicMetadataDownloadHandler {
                                 e.onComplete();
                             }
 
-                        }).subscribeOn(MainSchedulerProvider.INSTANCE.computation())
+                        }).observeOn(MainSchedulerProvider.INSTANCE.ui())
+                                .subscribeOn(MainSchedulerProvider.INSTANCE.computation())
                                 .subscribe(new Observer<Void>() {
 
                                     @Override
                                     public void onError(Throwable e) {
-
+                                        LOGGER.error("Error while storing metadata", e);
+                                        handleError(context, progressDialog);
                                     }
 
                                     @Override
                                     public void onComplete() {
                                         LOGGER.debug("I am done");
+                                        UIUtils.dismissProgressBar(progressDialog);
                                     }
 
                                     @Override
@@ -171,5 +186,12 @@ public class TopicMetadataDownloadHandler {
                     }
                 });
 
+    }
+
+    private static void handleError(Context context, ProgressDialog progressDialog){
+        UIUtils.showToast(context,
+                context.getString(R.string.error_message_downloading_metadata),
+                Toast.LENGTH_LONG);
+        UIUtils.dismissProgressBar(progressDialog);
     }
 }

@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import com.sikhcentre.R;
 import com.sikhcentre.entities.Topic;
 import com.sikhcentre.fragments.TopicListFragment;
+import com.sikhcentre.network.TopicMetadataDownloadHandler;
 import com.sikhcentre.schedulers.ISchedulerProvider;
 import com.sikhcentre.schedulers.MainSchedulerProvider;
 import com.sikhcentre.utils.FragmentUtils;
@@ -41,7 +42,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.main, menu);
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        MenuItem searchMenuItem = menu.findItem(R.id.search_menuitem);
+        MenuItem searchMenuItem = menu.findItem(R.id.menu_item_action_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
@@ -108,9 +108,13 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.menu_item_action_refresh:
+                TopicMetadataDownloadHandler.fetchData(MainActivity.this);
+                break;
+            case R.id.menu_item_action_settings:
+                return true;
+
         }
 
         return super.onOptionsItemSelected(item);

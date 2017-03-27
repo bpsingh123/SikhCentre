@@ -3,7 +3,13 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="action_settings">Settings</string>
-    <string name="search_title">Search</string>
+    <string name="menu_item_string_refresh">Refresh</string>
+    <string name="menu_item_string_settings">Settings</string>
+    <string name="menu_item_string_search">Search</string>
     <string name="search_hint">Search an item</string>
+    <string name="loading_indicator_title">Please Wait</string>
+    <string name="loading_indicator_loading_metadata_text">Refreshing app data</string>
+    <string name="loading_indicator_loading_file_text">Downloading File</string>
+    <string name="error_message_downloading_metadata">Error occurred while downloading information</string>
+    <string name="error_message_downloading_file">Error occurred while downloading file</string>
 </resources>
