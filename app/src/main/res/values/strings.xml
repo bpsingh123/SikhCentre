@@ -12,4 +12,8 @@
     <string name="loading_indicator_loading_file_text">Downloading File</string>
     <string name="error_message_downloading_metadata">Error occurred while downloading information</string>
     <string name="error_message_downloading_file">Error occurred while downloading file</string>
+    <string name="error_message_no_internet">Check you internet connection</string>
+    <string name="error_message_no_storage">File can\'t be downloaded as your external storage is not in mountable state</string>
+    <string name="error_message_pdf_no_app">No Application available to view PDF</string>
+    <string name="error_message_pdf_not_opening">Error while opening PDF file</string>
 </resources>

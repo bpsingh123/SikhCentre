@@ -15,18 +15,14 @@ public class FileUtils {
 
     /* Checks if external storage is available for read and write */
     public static boolean isExternalStorageWritable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
+        return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
     }
 
     public static String getTopicPathForDiskStorage(Context context, Topic topic) {
         return String.format("%s%sTopic%d", getAppDirPathForDiskStorage(context), File.separator, topic.getId());
     }
 
-    public static String getAppDirPathForDiskStorage(Context context){
+    public static String getAppDirPathForDiskStorage(Context context) {
         return String.format("%s%s%s", context.getExternalFilesDir(null), File.separator, Constants.APP_DIR);
     }
 

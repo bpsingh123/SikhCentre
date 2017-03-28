@@ -27,4 +27,8 @@ public class UIUtils {
     public static void showToast(Context context, String text, int duration){
         Toast.makeText(context, text, duration).show();
     }
+
+    public static void showToast(Context context, String text){
+        showToast(context, text, Toast.LENGTH_LONG);
+    }
 }

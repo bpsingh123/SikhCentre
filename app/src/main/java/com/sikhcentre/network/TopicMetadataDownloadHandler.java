@@ -2,7 +2,6 @@ package com.sikhcentre.network;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.sikhcentre.R;
@@ -15,6 +14,7 @@ import com.sikhcentre.entities.TopicAuthor;
 import com.sikhcentre.entities.TopicTag;
 import com.sikhcentre.models.MetaDataResponse;
 import com.sikhcentre.schedulers.MainSchedulerProvider;
+import com.sikhcentre.utils.NetworkUtils;
 import com.sikhcentre.utils.StringUtils;
 import com.sikhcentre.utils.UIUtils;
 
@@ -120,6 +120,9 @@ public class TopicMetadataDownloadHandler {
     }
 
     public static void fetchData(final Context context) {
+        if(!NetworkUtils.isNetworkAvailable(context)){
+            return;
+        }
         final ProgressDialog progressDialog = UIUtils.showProgressBar(context,
                 context.getString(R.string.loading_indicator_title),
                 context.getString(R.string.loading_indicator_loading_metadata_text));
@@ -189,9 +192,7 @@ public class TopicMetadataDownloadHandler {
     }
 
     private static void handleError(Context context, ProgressDialog progressDialog){
-        UIUtils.showToast(context,
-                context.getString(R.string.error_message_downloading_metadata),
-                Toast.LENGTH_LONG);
+        UIUtils.showToast(context, context.getString(R.string.error_message_downloading_metadata));
         UIUtils.dismissProgressBar(progressDialog);
     }
 }

@@ -4,12 +4,13 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
-import android.widget.Toast;
 
+import com.sikhcentre.R;
 import com.sikhcentre.entities.Topic;
 import com.sikhcentre.network.DownloadFileHandler;
 import com.sikhcentre.schedulers.MainSchedulerProvider;
 import com.sikhcentre.utils.FileUtils;
+import com.sikhcentre.utils.UIUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,12 +33,11 @@ public enum SikhCentrePdfReader {
     private static final Logger LOGGER = LoggerFactory.getLogger(DownloadFileHandler.class);
 
     public void handlePdfTopic(final Activity activity, Topic topic) {
-//        if(!FileUtils.isExternalStorageWritable()){
-//            LOGGER.error("External storage not available, so can't process pdf file");
-//
-//            //TODO show some error message
-//            return;
-//        }
+        if(!FileUtils.isExternalStorageWritable()){
+            LOGGER.error("External storage not available, so can't process pdf file");
+            UIUtils.showToast(activity, activity.getString(R.string.error_message_no_storage));
+            return;
+        }
 
         String url = FileUtils.getTopicPathForDiskStorage(activity, topic);
         if (FileUtils.isTopicDownloadedOnDisk(url)) {
@@ -50,7 +50,15 @@ public enum SikhCentrePdfReader {
             disposable = observable.observeOn(MainSchedulerProvider.INSTANCE.ui()).subscribe(new Consumer<String>() {
                 @Override
                 public void accept(@NonNull String url) throws Exception {
-                    openPdfFile(activity, url);
+                    if (url != null) {
+                        openPdfFile(activity, url);
+                    }
+                }
+            }, new Consumer<Throwable>() {
+                @Override
+                public void accept(@NonNull Throwable throwable) throws Exception {
+                    LOGGER.error("Error while downloading topic", throwable);
+                    UIUtils.showToast(activity, activity.getString(R.string.error_message_downloading_file));
                 }
             });
         }
@@ -61,14 +69,14 @@ public enum SikhCentrePdfReader {
         Intent pdfIntent = new Intent(Intent.ACTION_VIEW);
         pdfIntent.setDataAndType(path, "application/pdf");
         pdfIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        try{
+        try {
             activity.startActivity(pdfIntent);
-        }catch(ActivityNotFoundException e){
+        } catch (ActivityNotFoundException e) {
             LOGGER.error("No Application available to view PDF", e);
-            Toast.makeText(activity, "No Application available to view PDF", Toast.LENGTH_SHORT).show();
-        }catch (Exception e){
+            UIUtils.showToast(activity, activity.getString(R.string.error_message_pdf_no_app));
+        } catch (Exception e) {
             LOGGER.error("Error while opening PDF", e);
-            Toast.makeText(activity, "Error while opening PDFs", Toast.LENGTH_SHORT).show();
+            UIUtils.showToast(activity, activity.getString(R.string.error_message_pdf_not_opening));
         }
     }
 }

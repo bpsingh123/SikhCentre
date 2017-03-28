@@ -122,7 +122,7 @@ public class TopicListFragment extends BaseFragment {
                         LOGGER.debug("accept: {}", topic.getTopicType());
                         switch (topic.getTopicType()) {
                             case AUDIO:
-                                sikhCentreMediaPlayer.start(topic);
+                                sikhCentreMediaPlayer.start(getActivity(), topic);
                                 break;
                             case PDF:
                                 SikhCentrePdfReader.INSTANCE.handlePdfTopic(getActivity(), topic);

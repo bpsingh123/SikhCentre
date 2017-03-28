@@ -1,6 +1,7 @@
 package com.sikhcentre.media;
 
 import android.app.Activity;
+import android.content.Context;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,6 +13,7 @@ import com.sikhcentre.entities.Topic;
 import com.sikhcentre.models.MediaPlayerModel;
 import com.sikhcentre.models.MediaPlayerServiceModel;
 import com.sikhcentre.schedulers.MainSchedulerProvider;
+import com.sikhcentre.utils.NetworkUtils;
 import com.sikhcentre.viewmodel.MediaPlayerViewModel;
 
 import org.slf4j.Logger;
@@ -60,7 +62,10 @@ public class SikhCentreMediaPlayer implements View.OnClickListener {
         audioToolbar.setVisibility(View.GONE);
     }
 
-    public void start(Topic topic) {
+    public void start(Context context, Topic topic) {
+        if(!NetworkUtils.isNetworkAvailable(context)){
+            return;
+        }
         LOGGER.debug("start: {}", topic);
         action = Action.START;
         audioToolbar.setVisibility(View.VISIBLE);

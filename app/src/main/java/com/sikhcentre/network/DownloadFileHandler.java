@@ -6,6 +6,7 @@ import com.sikhcentre.entities.Topic;
 import com.sikhcentre.network.clients.DownloadFileClient;
 import com.sikhcentre.schedulers.MainSchedulerProvider;
 import com.sikhcentre.utils.FileUtils;
+import com.sikhcentre.utils.NetworkUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +53,10 @@ public class DownloadFileHandler {
     }
 
     public Observable<String> downloadTopic(final Context context, final Topic topic, final String filePath) {
+
+        if(!NetworkUtils.isNetworkAvailable(context)){
+            fileUrlSubject.onNext(null);
+        }
 
         DownloadFileClient downloadFileClient = retrofit.create(DownloadFileClient.class);
 
