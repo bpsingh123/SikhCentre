@@ -14,10 +14,8 @@ import android.widget.AdapterView;
 import com.sikhcentre.R;
 import com.sikhcentre.adapters.TopicListAdapter;
 import com.sikhcentre.entities.Topic;
-import com.sikhcentre.media.SikhCentrePdfReader;
 import com.sikhcentre.schedulers.ISchedulerProvider;
 import com.sikhcentre.schedulers.MainSchedulerProvider;
-import com.sikhcentre.media.SikhCentreMediaPlayer;
 import com.sikhcentre.viewmodel.SearchViewModel;
 
 import org.slf4j.Logger;
@@ -34,7 +32,7 @@ import io.reactivex.functions.Consumer;
 
 public class TopicListFragment extends BaseFragment {
     private TopicListAdapter topicListAdapter;
-    private SikhCentreMediaPlayer sikhCentreMediaPlayer;
+//    private SikhCentreMediaPlayer sikhCentreMediaPlayer;
 
     @NonNull
     private CompositeDisposable subscription;
@@ -67,7 +65,7 @@ public class TopicListFragment extends BaseFragment {
         topicListAdapter = new TopicListAdapter(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                searchViewModel.handleSelectedTopic(getActivity(), topicListAdapter.getTopicAt(pos));
+                searchViewModel.handleSelectedTopic(topicListAdapter.getTopicAt(pos));
             }
         });
         topicRecyclerView.setAdapter(topicListAdapter);
@@ -76,7 +74,7 @@ public class TopicListFragment extends BaseFragment {
                 layoutManager.getOrientation());
         topicRecyclerView.addItemDecoration(dividerItemDecoration);
 
-        sikhCentreMediaPlayer = new SikhCentreMediaPlayer(getActivity(), R.id.toolbar_audio);
+//        sikhCentreMediaPlayer = new SikhCentreMediaPlayer(getActivity(), R.id.toolbar_audio);
     }
 
     @Override
@@ -113,27 +111,27 @@ public class TopicListFragment extends BaseFragment {
 
                 }));
 
-        subscription.add(searchViewModel.getSelectedTopicSubjectAsObservable()
-                .observeOn(schedulerProvider.ui())
-                .subscribe(new Consumer<Topic>() {
+//        subscription.add(searchViewModel.getSelectedTopicSubjectAsObservable()
+//                .observeOn(schedulerProvider.ui())
+//                .subscribe(new Consumer<Topic>() {
+//
+//                    @Override
+//                    public void accept(@io.reactivex.annotations.NonNull Topic topic) throws Exception {
+//                        LOGGER.debug("accept: {}", topic.getTopicType());
+//                        switch (topic.getTopicType()) {
+//                            case AUDIO:
+//                                sikhCentreMediaPlayer.start(getActivity(), topic);
+//                                break;
+//                            case PDF:
+//                                SikhCentrePdfReader.INSTANCE.handlePdfTopic(getActivity(), topic);
+//                            default:
+//                                sikhCentreMediaPlayer.stop();
+//                        }
+//
+//                    }
+//                }));
 
-                    @Override
-                    public void accept(@io.reactivex.annotations.NonNull Topic topic) throws Exception {
-                        LOGGER.debug("accept: {}", topic.getTopicType());
-                        switch (topic.getTopicType()) {
-                            case AUDIO:
-                                sikhCentreMediaPlayer.start(getActivity(), topic);
-                                break;
-                            case PDF:
-                                SikhCentrePdfReader.INSTANCE.handlePdfTopic(getActivity(), topic);
-                            default:
-                                sikhCentreMediaPlayer.stop();
-                        }
-
-                    }
-                }));
-
-        sikhCentreMediaPlayer.bind();
+//        sikhCentreMediaPlayer.bind();
 
     }
 
@@ -141,7 +139,7 @@ public class TopicListFragment extends BaseFragment {
         LOGGER.debug("unBind");
         if (subscription != null) {
             subscription.dispose();
-            sikhCentreMediaPlayer.unbind();
+//            sikhCentreMediaPlayer.unbind();
         }
     }
 }

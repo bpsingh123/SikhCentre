@@ -29,4 +29,24 @@
         <item name="android:textSize">13sp</item>
     </style>
 
+    <style name="titleTextStyle">
+        <item name="android:textSize">24sp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="subTitleTextStyle">
+        <item name="android:textSize">20sp</item>
+        <item name="android:gravity">left</item>
+    </style>
+
+    <style name="cardStyle">
+        <item name="android:gravity">center</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginTop">@dimen/medium_dimen</item>
+        <item name="cardElevation">@dimen/tiny_dimen</item>
+        <item name="contentPadding">@dimen/medium_dimen</item>
+        <item name="cardCornerRadius">5dp</item>
+    </style>
+
 </resources>

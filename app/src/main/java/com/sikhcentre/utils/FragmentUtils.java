@@ -12,7 +12,7 @@ import android.support.v4.app.FragmentTransaction;
 public class FragmentUtils {
     public enum FragmentTag {
         TOPIC_LIST,
-        AUDIO
+        TOPIC_DETAIL
     }
 
     public static void createFragment(int containerId, Fragment fragment, Bundle bundle,

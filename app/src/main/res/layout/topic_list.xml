@@ -12,9 +12,4 @@
         android:clipToPadding="false"
         android:scrollbars="vertical" />
 
-    <include
-        android:id="@+id/toolbar_audio"
-        layout="@layout/audio_toolbar"
-        android:visibility="gone" />
-
 </RelativeLayout>

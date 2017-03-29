@@ -1,5 +1,8 @@
 package com.sikhcentre.entities;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
@@ -13,7 +16,7 @@ import java.util.List;
  * Created by brinder.singh on 31/12/16.
  */
 @Entity
-public class Author {
+public class Author implements Parcelable{
     @Id
     private Long id;
     private String name;
@@ -39,6 +42,36 @@ public class Author {
 
     @Generated(hash = 64241762)
     public Author() {
+    }
+
+    protected Author(Parcel in) {
+        id = in.readLong();
+        name = in.readString();
+        topics = in.createTypedArrayList(Topic.CREATOR);
+    }
+
+    public static final Creator<Author> CREATOR = new Creator<Author>() {
+        @Override
+        public Author createFromParcel(Parcel in) {
+            return new Author(in);
+        }
+
+        @Override
+        public Author[] newArray(int size) {
+            return new Author[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeLong(id);
+        parcel.writeString(name);
+        parcel.writeTypedList(topics);
     }
 
     public Long getId() {

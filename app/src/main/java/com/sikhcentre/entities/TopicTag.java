@@ -1,5 +1,8 @@
 package com.sikhcentre.entities;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
@@ -10,7 +13,7 @@ import org.greenrobot.greendao.DaoException;
  * Created by brinder.singh on 31/12/16.
  */
 @Entity
-public class TopicTag {
+public class TopicTag implements Parcelable{
     @Id(autoincrement = true)
     private Long id;
     private Long topicId;
@@ -38,6 +41,40 @@ public class TopicTag {
 
     @Generated(hash = 588083404)
     public TopicTag() {
+    }
+
+    protected TopicTag(Parcel in) {
+        id = in.readLong();
+        topicId = in.readLong();
+        tagId = in.readLong();
+        weight = in.readDouble();
+        topic = in.readParcelable(Topic.class.getClassLoader());
+    }
+
+    public static final Creator<TopicTag> CREATOR = new Creator<TopicTag>() {
+        @Override
+        public TopicTag createFromParcel(Parcel in) {
+            return new TopicTag(in);
+        }
+
+        @Override
+        public TopicTag[] newArray(int size) {
+            return new TopicTag[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeLong(id);
+        parcel.writeLong(topicId);
+        parcel.writeLong(tagId);
+        parcel.writeDouble(weight);
+        parcel.writeParcelable(topic, i);
     }
 
     public Long getId() {
@@ -143,4 +180,5 @@ public class TopicTag {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getTopicTagDao() : null;
     }
+
 }

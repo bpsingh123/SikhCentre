@@ -14,11 +14,13 @@ import android.view.MenuItem;
 
 import com.sikhcentre.R;
 import com.sikhcentre.entities.Topic;
+import com.sikhcentre.fragments.TopicDetailFragment;
 import com.sikhcentre.fragments.TopicListFragment;
 import com.sikhcentre.network.TopicMetadataDownloadHandler;
 import com.sikhcentre.schedulers.ISchedulerProvider;
 import com.sikhcentre.schedulers.MainSchedulerProvider;
 import com.sikhcentre.utils.FragmentUtils;
+import com.sikhcentre.utils.IssueReporter;
 import com.sikhcentre.viewmodel.SearchViewModel;
 
 import io.reactivex.disposables.CompositeDisposable;
@@ -112,6 +114,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.menu_item_action_refresh:
                 TopicMetadataDownloadHandler.fetchData(MainActivity.this);
                 break;
+            case R.id.menu_item_action_report:
+                IssueReporter.report(MainActivity.this);
+                break;
             case R.id.menu_item_action_settings:
                 return true;
 
@@ -154,15 +159,9 @@ public class MainActivity extends AppCompatActivity
 
                     @Override
                     public void accept(@io.reactivex.annotations.NonNull Topic topic) throws Exception {
-                        switch (topic.getTopicType()) {
-                            case TEXT:
-                                break;
-                            case IMAGE:
-                                break;
-                            case VIDEO:
-                                break;
-                            default:
-                        }
+                        getIntent().putExtra(TopicDetailFragment.TOPIC, topic);
+                        FragmentUtils.replaceFragment(R.id.container_framelayout, new TopicDetailFragment(),
+                                getIntent().getExtras(), getSupportFragmentManager(), FragmentUtils.FragmentTag.TOPIC_DETAIL);
                     }
 
                 }));

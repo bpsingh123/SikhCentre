@@ -1,6 +1,5 @@
 package com.sikhcentre.viewmodel;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.sikhcentre.database.repositories.AuthorRepository;
@@ -85,7 +84,7 @@ public enum SearchViewModel {
         return selectedTopicSubject;
     }
 
-    public void handleSelectedTopic(Context context, Topic topic) {
+    public void handleSelectedTopic(Topic topic) {
         selectedTopicSubject.onNext(topic);
     }
 

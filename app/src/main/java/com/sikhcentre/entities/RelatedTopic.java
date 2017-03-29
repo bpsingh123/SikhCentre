@@ -1,5 +1,8 @@
 package com.sikhcentre.entities;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
@@ -10,7 +13,7 @@ import org.greenrobot.greendao.DaoException;
  * Created by brinder.singh on 26/03/17.
  */
 @Entity
-public class RelatedTopic {
+public class RelatedTopic implements Parcelable{
     @Id(autoincrement = true)
     private Long id;
     private Long topicId;
@@ -38,6 +41,41 @@ public class RelatedTopic {
     @Generated(hash = 1341454251)
     public RelatedTopic() {
     }
+
+    protected RelatedTopic(Parcel in) {
+        id = in.readLong();
+        topicId = in.readLong();
+        relatedTopicId = in.readLong();
+        weight = in.readDouble();
+        relatedTopic = in.readParcelable(Topic.class.getClassLoader());
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeLong(id);
+        parcel.writeLong(topicId);
+        parcel.writeLong(relatedTopicId);
+        parcel.writeDouble(weight);
+        parcel.writeParcelable(relatedTopic, i);
+    }
+
+    public static final Creator<RelatedTopic> CREATOR = new Creator<RelatedTopic>() {
+        @Override
+        public RelatedTopic createFromParcel(Parcel in) {
+            return new RelatedTopic(in);
+        }
+
+        @Override
+        public RelatedTopic[] newArray(int size) {
+            return new RelatedTopic[size];
+        }
+    };
+
     public Long getId() {
         return this.id;
     }
@@ -128,4 +166,5 @@ public class RelatedTopic {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getRelatedTopicDao() : null;
     }
+
 }

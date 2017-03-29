@@ -1,5 +1,8 @@
 package com.sikhcentre.entities;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import org.greenrobot.greendao.DaoException;
@@ -22,7 +25,7 @@ import lombok.ToString;
  */
 @Entity
 @ToString
-public class Topic {
+public class Topic implements Parcelable{
     @Id
     private Long id;
     private String title;
@@ -78,6 +81,45 @@ public class Topic {
     public Topic() {
     }
 
+    protected Topic(Parcel in) {
+        id = in.readLong();
+        topicType = TopicType.valueOf(in.readString());
+        title = in.readString();
+        url = in.readString();
+        authors = in.createTypedArrayList(Author.CREATOR);
+        references = in.createTypedArrayList(Reference.CREATOR);
+        topicTags = in.createTypedArrayList(TopicTag.CREATOR);
+        relatedTopics = in.createTypedArrayList(RelatedTopic.CREATOR);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeLong(id);
+        parcel.writeString(topicType.name());
+        parcel.writeString(title);
+        parcel.writeString(url);
+        parcel.writeTypedList(authors);
+        parcel.writeTypedList(references);
+        parcel.writeTypedList(topicTags);
+        parcel.writeTypedList(relatedTopics);
+    }
+
+    public static final Creator<Topic> CREATOR = new Creator<Topic>() {
+        @Override
+        public Topic createFromParcel(Parcel in) {
+            return new Topic(in);
+        }
+
+        @Override
+        public Topic[] newArray(int size) {
+            return new Topic[size];
+        }
+    };
 
     public void setTitle(String title) {
         this.title = title;
