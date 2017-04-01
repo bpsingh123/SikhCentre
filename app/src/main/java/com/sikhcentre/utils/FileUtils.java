@@ -30,4 +30,11 @@ public class FileUtils {
         File file = new File(url);
         return file.exists();
     }
+
+    public static void deleteFile(String url){
+        File file = new File(url);
+        if(file.exists()){
+            file.delete();
+        }
+    }
 }

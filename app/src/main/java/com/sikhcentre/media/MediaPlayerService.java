@@ -122,6 +122,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
                                 case CHANGE:
                                     start(mediaPlayerModel.getUrl());
                                     break;
+                                case SEEK:
+                                    handleSeek(mediaPlayerModel);
+                                    break;
                             }
                         } catch (Exception e) {
                             LOGGER.error("onNext: ", e);
@@ -132,7 +135,15 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
     private MediaPlayerServiceModel getMediaPlayerInfo(MediaPlayer mediaPlayer) {
-        return new MediaPlayerServiceModel(mediaPlayer.isPlaying(), mediaPlayer.getDuration());
+        return new MediaPlayerServiceModel.Builder()
+                .playing(mediaPlayer.isPlaying())
+                .duration(mediaPlayer.getDuration())
+                .currentPosition(mediaPlayer.getCurrentPosition())
+                .build();
+    }
+
+    private void handleSeek(MediaPlayerModel mediaPlayerModel){
+        mediaPlayer.seekTo(mediaPlayerModel.getSeekToTime());
     }
 
     public void unbind() {
@@ -173,13 +184,23 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
     @Override
-    public boolean onInfo(MediaPlayer mediaPlayer, int i, int i1) {
+    public boolean onInfo(MediaPlayer mediaPlayer, int what, int extra) {
+        switch (what) {
+            case MediaPlayer.MEDIA_INFO_BUFFERING_START:
+                mediaPlayerViewModel.handlePlayerServiceAction(new MediaPlayerServiceModel
+                        .Builder().isBuffering(true).build());
+                break;
+            case MediaPlayer.MEDIA_INFO_BUFFERING_END:
+                mediaPlayerViewModel.handlePlayerServiceAction(new MediaPlayerServiceModel
+                        .Builder().isBuffering(false).build());
+                break;
+        }
         return false;
     }
 
     @Override
     public void onSeekComplete(MediaPlayer mediaPlayer) {
-
+        mediaPlayerViewModel.handlePlayerServiceAction(getMediaPlayerInfo(mediaPlayer));
     }
 
     public void play() {

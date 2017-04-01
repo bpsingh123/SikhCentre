@@ -33,6 +33,40 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
+                    <LinearLayout
+                        android:id="@+id/topicDetailLLFileView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <Button
+                            android:id="@+id/topicDetailOpenFile"
+                            android:layout_width="0px"
+                            android:layout_height="wrap_content"
+                            android:drawableLeft="@drawable/ic_folder_open_blue_900_24dp"
+                            android:drawableStart="@drawable/ic_folder_open_blue_900_24dp"
+                            android:text="@string/detail_view_button_file_open"
+                            android:layout_weight=".5"/>
+
+                        <Button
+                            android:id="@+id/topicDetailDownloadFile"
+                            android:layout_width="0px"
+                            android:layout_height="wrap_content"
+                            android:drawableLeft="@drawable/ic_file_download_blue_900_24dp"
+                            android:drawableStart="@drawable/ic_file_download_blue_900_24dp"
+                            android:text="@string/detail_view_button_file_download"
+                            android:layout_weight=".5"/>
+
+                        <Button
+                            android:id="@+id/topicDetailDeleteFile"
+                            android:layout_width="0px"
+                            android:layout_height="wrap_content"
+                            android:drawableLeft="@drawable/ic_delete_forever_red_900_24dp"
+                            android:drawableStart="@drawable/ic_delete_forever_red_900_24dp"
+                            android:text="@string/detail_view_button_file_delete"
+                            android:layout_weight=".5"
+                            android:visibility="gone"/>
+                    </LinearLayout>
+
                     <FrameLayout
                         android:id="@+id/topicDetailFrameLayoutContent"
                         android:layout_width="match_parent"
@@ -56,7 +90,7 @@
                         style="@style/subTitleTextStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/detail_view_header_author"/>
+                        android:text="@string/detail_view_header_author" />
 
                     <TableLayout
                         android:id="@+id/topicDetailTableLayoutAuthor"
@@ -106,7 +140,7 @@
                         style="@style/subTitleTextStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/detail_view_header_similar_topics"/>
+                        android:text="@string/detail_view_header_similar_topics" />
 
                     <TableLayout
                         android:id="@+id/topicDetailTableLayoutSimilarTopics"
@@ -131,7 +165,7 @@
                         style="@style/subTitleTextStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/detail_view_header_references"/>
+                        android:text="@string/detail_view_header_references" />
 
                     <TableLayout
                         android:id="@+id/topicDetailTableLayoutReferences"

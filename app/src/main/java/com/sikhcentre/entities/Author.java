@@ -47,7 +47,6 @@ public class Author implements Parcelable{
     protected Author(Parcel in) {
         id = in.readLong();
         name = in.readString();
-        topics = in.createTypedArrayList(Topic.CREATOR);
     }
 
     public static final Creator<Author> CREATOR = new Creator<Author>() {
@@ -71,7 +70,6 @@ public class Author implements Parcelable{
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeLong(id);
         parcel.writeString(name);
-        parcel.writeTypedList(topics);
     }
 
     public Long getId() {

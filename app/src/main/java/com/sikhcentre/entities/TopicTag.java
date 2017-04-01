@@ -48,7 +48,6 @@ public class TopicTag implements Parcelable{
         topicId = in.readLong();
         tagId = in.readLong();
         weight = in.readDouble();
-        topic = in.readParcelable(Topic.class.getClassLoader());
     }
 
     public static final Creator<TopicTag> CREATOR = new Creator<TopicTag>() {
@@ -74,7 +73,6 @@ public class TopicTag implements Parcelable{
         parcel.writeLong(topicId);
         parcel.writeLong(tagId);
         parcel.writeDouble(weight);
-        parcel.writeParcelable(topic, i);
     }
 
     public Long getId() {

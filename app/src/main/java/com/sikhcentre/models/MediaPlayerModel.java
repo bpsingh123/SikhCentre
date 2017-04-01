@@ -15,7 +15,8 @@ public class MediaPlayerModel {
         STOP,
         SEEK,
         CHECK_STATUS,
-        CHANGE
+        CHANGE,
+        GET_TIMING
     }
 
     public MediaPlayerModel(Action action, int seekToTime) {

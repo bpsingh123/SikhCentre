@@ -47,7 +47,6 @@ public class RelatedTopic implements Parcelable{
         topicId = in.readLong();
         relatedTopicId = in.readLong();
         weight = in.readDouble();
-        relatedTopic = in.readParcelable(Topic.class.getClassLoader());
     }
 
     @Override
@@ -61,7 +60,6 @@ public class RelatedTopic implements Parcelable{
         parcel.writeLong(topicId);
         parcel.writeLong(relatedTopicId);
         parcel.writeDouble(weight);
-        parcel.writeParcelable(relatedTopic, i);
     }
 
     public static final Creator<RelatedTopic> CREATOR = new Creator<RelatedTopic>() {

@@ -1,12 +1,15 @@
 package com.sikhcentre.network;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 
+import com.sikhcentre.R;
 import com.sikhcentre.entities.Topic;
 import com.sikhcentre.network.clients.DownloadFileClient;
 import com.sikhcentre.schedulers.MainSchedulerProvider;
 import com.sikhcentre.utils.FileUtils;
 import com.sikhcentre.utils.NetworkUtils;
+import com.sikhcentre.utils.UIUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,11 +61,16 @@ public class DownloadFileHandler {
             fileUrlSubject.onNext(null);
         }
 
+        final ProgressDialog progressDialog = UIUtils.showProgressBar(context,
+                context.getString(R.string.loading_indicator_title),
+                context.getString(R.string.loading_indicator_loading_file_text));
+
         DownloadFileClient downloadFileClient = retrofit.create(DownloadFileClient.class);
 
         if (responseBodyObservable != null) {
             responseBodyObservable.dispose();
         }
+
         responseBodyObservable = downloadFileClient.downloadFile(topic.getUrl())
                 .subscribeOn(MainSchedulerProvider.INSTANCE.computation())
                 .observeOn(MainSchedulerProvider.INSTANCE.computation())
@@ -84,13 +92,14 @@ public class DownloadFileHandler {
 
                                     @Override
                                     public void onError(Throwable e) {
-
+                                        handleError(context, progressDialog);
                                     }
 
                                     @Override
                                     public void onComplete() {
                                         LOGGER.debug("file download completed", topic);
                                         fileUrlSubject.onNext(filePath);
+                                        UIUtils.dismissProgressBar(progressDialog);
                                     }
 
                                     @Override
@@ -100,14 +109,16 @@ public class DownloadFileHandler {
 
                                     @Override
                                     public void onNext(Void aVoid) {
-                                        LOGGER.error("Error occurred while storing file to disk", topic);
+                                        LOGGER.error("Error occurred while storing file to disk");
+                                        handleError(context, progressDialog);
                                     }
                                 });
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(@NonNull Throwable throwable) throws Exception {
-
+                        LOGGER.error("Error occurred downloading file", throwable);
+                        handleError(context, progressDialog);
                     }
                 });
         return fileUrlSubject;
@@ -166,6 +177,11 @@ public class DownloadFileHandler {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    private static void handleError(Context context, ProgressDialog progressDialog){
+        UIUtils.showToast(context, context.getString(R.string.error_message_downloading_metadata));
+        UIUtils.dismissProgressBar(progressDialog);
     }
 
 }
