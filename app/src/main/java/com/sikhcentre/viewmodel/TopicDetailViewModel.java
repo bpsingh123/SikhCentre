@@ -1,5 +1,6 @@
 package com.sikhcentre.viewmodel;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.widget.TableLayout;
@@ -11,6 +12,11 @@ import com.sikhcentre.entities.Reference;
 import com.sikhcentre.entities.RelatedTopic;
 import com.sikhcentre.entities.Topic;
 import com.sikhcentre.entities.TopicTag;
+import com.sikhcentre.media.SikhCentreMediaPlayer;
+import com.sikhcentre.media.SikhCentrePdfReader;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -20,6 +26,8 @@ import java.util.List;
 
 public enum TopicDetailViewModel {
     INSTANCE;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TopicDetailViewModel.class);
 
     public void handleAuthorPopulation(Context context, TableLayout tableLayout, View view, Topic topic) {
         if (!shouldHeaderBeVisible(view, topic.getAuthors())) return;
@@ -51,16 +59,16 @@ public enum TopicDetailViewModel {
 
 
     private boolean shouldHeaderBeVisible(View view, List list) {
-        if(list.isEmpty()){
+        if (list.isEmpty()) {
             view.setVisibility(View.GONE);
             return false;
-        }else {
+        } else {
             view.setVisibility(View.VISIBLE);
         }
         return true;
     }
 
-    private TableRow addRow(Context context, String value){
+    private TableRow addRow(Context context, String value) {
         TableRow row = new TableRow(context);
         TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT);
         row.setLayoutParams(lp);
@@ -68,5 +76,18 @@ public enum TopicDetailViewModel {
         textView.setText(value);
         row.addView(textView);
         return row;
+    }
+
+    public void handleTopic(Activity activity, Topic topic, SikhCentreMediaPlayer sikhCentreMediaPlayer) {
+        LOGGER.debug("handleTopic: {}", topic.getTopicType());
+        switch (topic.getTopicType()) {
+            case AUDIO:
+                sikhCentreMediaPlayer.start(activity, topic);
+                break;
+            case PDF:
+                SikhCentrePdfReader.INSTANCE.handlePdfTopic(activity, topic);
+            default:
+                sikhCentreMediaPlayer.stop();
+        }
     }
 }

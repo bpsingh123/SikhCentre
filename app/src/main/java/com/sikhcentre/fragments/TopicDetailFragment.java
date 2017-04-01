@@ -10,7 +10,11 @@ import android.widget.TextView;
 
 import com.sikhcentre.R;
 import com.sikhcentre.entities.Topic;
+import com.sikhcentre.media.SikhCentreMediaPlayer;
 import com.sikhcentre.viewmodel.TopicDetailViewModel;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by brinder.singh on 28/03/17.
@@ -18,12 +22,15 @@ import com.sikhcentre.viewmodel.TopicDetailViewModel;
 
 public class TopicDetailFragment extends BaseFragment {
     public static final String TOPIC = "topic";
+    private static final Logger LOGGER = LoggerFactory.getLogger(TopicDetailFragment.class);
+
     private Topic topic;
     private TableLayout tableLayoutAuthor;
     private TableLayout tableLayoutRelatedTopics;
     private TableLayout tableLayoutSimilarTopics;
     private TableLayout tableLayoutReferences;
     private TopicDetailViewModel topicDetailViewModel;
+    private SikhCentreMediaPlayer sikhCentreMediaPlayer;
 
     @Nullable
     @Override
@@ -37,6 +44,7 @@ public class TopicDetailFragment extends BaseFragment {
         topic = getArguments().getParcelable(TOPIC);
         topicDetailViewModel = TopicDetailViewModel.INSTANCE;
         setUpViews();
+        topicDetailViewModel.handleTopic(getActivity(), topic, sikhCentreMediaPlayer);
     }
 
     private void setUpViews() {
@@ -53,5 +61,31 @@ public class TopicDetailFragment extends BaseFragment {
                 getView().findViewById(R.id.topicDetailViewCardViewSimilarTopics), topic);
         topicDetailViewModel.handleReferencesPopulation(getActivity(), tableLayoutReferences,
                 getView().findViewById(R.id.topicDetailViewCardViewReferences), topic);
+
+        sikhCentreMediaPlayer = new SikhCentreMediaPlayer(getActivity(), R.id.toolbar_audio);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        bind();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        unBind();
+    }
+
+    private void bind() {
+        LOGGER.debug("bind");
+        unBind();
+        sikhCentreMediaPlayer.bind();
+
+    }
+
+    private void unBind() {
+        LOGGER.debug("unBind");
+        sikhCentreMediaPlayer.unbind();
     }
 }

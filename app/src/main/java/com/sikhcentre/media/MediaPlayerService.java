@@ -9,7 +9,6 @@ import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.sikhcentre.models.MediaPlayerModel;
 import com.sikhcentre.models.MediaPlayerServiceModel;
@@ -23,6 +22,8 @@ import java.io.IOException;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
@@ -103,7 +104,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
                     @Override
                     public void accept(@NonNull MediaPlayerModel mediaPlayerModel) throws Exception {
-                        LOGGER.debug("OnNext:{}",  mediaPlayerModel.getAction());
+                        LOGGER.debug("OnNext:{}", mediaPlayerModel.getAction());
                         try {
                             switch (mediaPlayerModel.getAction()) {
                                 case PLAY:
@@ -229,12 +230,17 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         }
     }
 
-    public static boolean startMediaPlayer(Context context, String url) {
+    public static boolean startMediaPlayer(final Context context, final String url) {
         if (!isServiceRunning()) {
-            LOGGER.info("Starting Media Player:{}", url);
-            Intent intent = new Intent(context, MediaPlayerService.class);
-            intent.putExtra(MEDIA_RESOURCE_KEY, url);
-            context.startService(intent);
+            io.reactivex.Observable.create(new ObservableOnSubscribe<Void>() {
+                @Override
+                public void subscribe(ObservableEmitter<Void> e) throws Exception {
+                    LOGGER.info("Starting Media Player:{}", url);
+                    Intent intent = new Intent(context, MediaPlayerService.class);
+                    intent.putExtra(MEDIA_RESOURCE_KEY, url);
+                    context.startService(intent);
+                }
+            }).subscribeOn(MainSchedulerProvider.INSTANCE.computation()).subscribe();
             return true;
         } else {
             LOGGER.info("Media Player already running");
