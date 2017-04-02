@@ -117,7 +117,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
                                     pause();
                                     break;
                                 case CHECK_STATUS:
-                                    mediaPlayerViewModel.handlePlayerServiceAction(getMediaPlayerInfo(mediaPlayer));
+                                    mediaPlayerViewModel.handlePlayerServiceAction(getMediaPlayerInfo(mediaPlayer, mediaPlayerModel.getPlayerAction()));
                                     break;
                                 case CHANGE:
                                     start(mediaPlayerModel.getUrl());
@@ -134,15 +134,17 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
                 }));
     }
 
-    private MediaPlayerServiceModel getMediaPlayerInfo(MediaPlayer mediaPlayer) {
+    private MediaPlayerServiceModel getMediaPlayerInfo(MediaPlayer mediaPlayer,
+                                                       SikhCentreMediaPlayer.PlayerAction playerAction) {
         return new MediaPlayerServiceModel.Builder()
                 .playing(mediaPlayer.isPlaying())
                 .duration(mediaPlayer.getDuration())
                 .currentPosition(mediaPlayer.getCurrentPosition())
+                .playerAction(playerAction)
                 .build();
     }
 
-    private void handleSeek(MediaPlayerModel mediaPlayerModel){
+    private void handleSeek(MediaPlayerModel mediaPlayerModel) {
         mediaPlayer.seekTo(mediaPlayerModel.getSeekToTime());
     }
 
@@ -163,7 +165,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
-        mediaPlayerViewModel.handlePlayerServiceAction(getMediaPlayerInfo(mediaPlayer));
+        mediaPlayerViewModel.handlePlayerServiceAction(getMediaPlayerInfo(mediaPlayer, SikhCentreMediaPlayer.PlayerAction.START));
         play();
     }
 
@@ -185,22 +187,23 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     @Override
     public boolean onInfo(MediaPlayer mediaPlayer, int what, int extra) {
-        switch (what) {
-            case MediaPlayer.MEDIA_INFO_BUFFERING_START:
-                mediaPlayerViewModel.handlePlayerServiceAction(new MediaPlayerServiceModel
-                        .Builder().isBuffering(true).build());
-                break;
-            case MediaPlayer.MEDIA_INFO_BUFFERING_END:
-                mediaPlayerViewModel.handlePlayerServiceAction(new MediaPlayerServiceModel
-                        .Builder().isBuffering(false).build());
-                break;
-        }
+//        switch (what) {
+//            case MediaPlayer.MEDIA_INFO_BUFFERING_START:
+//                mediaPlayerViewModel.handlePlayerServiceAction(new MediaPlayerServiceModel
+//                        .Builder().isBuffering(true).build());
+//                break;
+//            case MediaPlayer.MEDIA_INFO_BUFFERING_END:
+//                mediaPlayerViewModel.handlePlayerServiceAction(new MediaPlayerServiceModel
+//                        .Builder().isBuffering(false).build());
+//                break;
+//        }
         return false;
     }
 
     @Override
     public void onSeekComplete(MediaPlayer mediaPlayer) {
-        mediaPlayerViewModel.handlePlayerServiceAction(getMediaPlayerInfo(mediaPlayer));
+        LOGGER.info("Brinder onSeekComplete");
+        mediaPlayerViewModel.handlePlayerServiceAction(getMediaPlayerInfo(mediaPlayer, SikhCentreMediaPlayer.PlayerAction.SEEK_BAR_MOVED));
     }
 
     public void play() {

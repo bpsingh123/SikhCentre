@@ -29,9 +29,9 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
-import static com.sikhcentre.media.SikhCentreMediaPlayer.Action.CHECK_STATUS;
-import static com.sikhcentre.media.SikhCentreMediaPlayer.Action.NONE;
-import static com.sikhcentre.media.SikhCentreMediaPlayer.Action.SEEK_BAR_MOVED;
+import static com.sikhcentre.media.SikhCentreMediaPlayer.PlayerAction.BUTTON_CLICK;
+import static com.sikhcentre.media.SikhCentreMediaPlayer.PlayerAction.CHECK_STATUS;
+import static com.sikhcentre.media.SikhCentreMediaPlayer.PlayerAction.SEEK_BAR_MOVED;
 
 /**
  * Created by brinder.singh on 24/03/17.
@@ -50,15 +50,12 @@ public class SikhCentreMediaPlayer implements View.OnClickListener, SeekBar.OnSe
     private ProgressDialog progressDialog;
     private Disposable getTimingDisposable;
 
-    enum Action {
-        NONE,
+    public enum PlayerAction {
         START,
         BUTTON_CLICK,
         CHECK_STATUS,
         SEEK_BAR_MOVED
     }
-
-    private Action action = Action.NONE;
 
     public SikhCentreMediaPlayer(Activity context, int toolbarId) {
         this.context = context;
@@ -81,7 +78,6 @@ public class SikhCentreMediaPlayer implements View.OnClickListener, SeekBar.OnSe
             return;
         }
         LOGGER.debug("start: {}", topic);
-        action = Action.START;
         audioToolbar.setVisibility(View.VISIBLE);
         bind();
 
@@ -89,7 +85,11 @@ public class SikhCentreMediaPlayer implements View.OnClickListener, SeekBar.OnSe
 
         if (!isMediaPlayerServiceStarted && !topic.equals(this.topic)) {
             LOGGER.debug("start through event");
-            mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel(MediaPlayerModel.Action.CHANGE, topic.getUrl()));
+            mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel.Builder()
+                    .playerAction(PlayerAction.START)
+                    .serviceAction(MediaPlayerModel.Action.CHANGE)
+                    .url(topic.getUrl())
+                    .build());
             isMediaPlayerServiceStarted = true;
         }
 
@@ -101,13 +101,16 @@ public class SikhCentreMediaPlayer implements View.OnClickListener, SeekBar.OnSe
     }
 
     private void showBufferingDialog() {
+        UIUtils.dismissProgressBar(progressDialog);
         progressDialog = UIUtils.showProgressBar(context,
                 context.getString(R.string.loading_indicator_title),
                 context.getString(R.string.loading_indicator_buffering));
     }
 
     public void stop() {
-        mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel(MediaPlayerModel.Action.STOP));
+        mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel.Builder()
+                .serviceAction(MediaPlayerModel.Action.STOP)
+                .build());
         audioToolbar.setVisibility(View.GONE);
         unbind();
     }
@@ -115,8 +118,11 @@ public class SikhCentreMediaPlayer implements View.OnClickListener, SeekBar.OnSe
     @Override
     public void onClick(View view) {
         LOGGER.debug("onClick");
-        setAction(Action.BUTTON_CLICK);
-        mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel(MediaPlayerModel.Action.CHECK_STATUS, 0));
+        mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel.Builder()
+                .playerAction(BUTTON_CLICK)
+                .serviceAction(MediaPlayerModel.Action.CHECK_STATUS)
+                .seekToTime(0)
+                .build());
     }
 
     public void bind() {
@@ -129,8 +135,8 @@ public class SikhCentreMediaPlayer implements View.OnClickListener, SeekBar.OnSe
                 .subscribe(new Consumer<MediaPlayerServiceModel>() {
                                @Override
                                public void accept(@NonNull MediaPlayerServiceModel mediaPlayerServiceModel) throws Exception {
-                                   LOGGER.debug("brinder OnNext:{}", action);
-                                   switch (action) {
+                                   LOGGER.debug("brinder OnNext:{}", mediaPlayerServiceModel.getPlayerAction());
+                                   switch (mediaPlayerServiceModel.getPlayerAction()) {
                                        case BUTTON_CLICK:
                                            handleButtonClickAction(mediaPlayerServiceModel);
                                            break;
@@ -159,20 +165,24 @@ public class SikhCentreMediaPlayer implements View.OnClickListener, SeekBar.OnSe
     }
 
     private void handleButtonClickAction(MediaPlayerServiceModel mediaPlayerServiceModel) {
-        resetAction();
         if (mediaPlayerServiceModel.isPlaying()) {
             imageView.setImageResource(R.drawable.ic_play_circle_outline_blue_900_24dp);
-            mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel(MediaPlayerModel.Action.PAUSE));
+            mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel.Builder()
+                    .serviceAction(MediaPlayerModel.Action.PAUSE)
+                    .playerAction(CHECK_STATUS)
+                    .build());
             stopGetTimingDisposable();
         } else {
             imageView.setImageResource(R.drawable.ic_pause_circle_outline_blue_900_24dp);
-            mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel(MediaPlayerModel.Action.PLAY));
+            mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel.Builder()
+                    .serviceAction(MediaPlayerModel.Action.PLAY)
+                    .playerAction(CHECK_STATUS)
+                    .build());
             startGetTimingDisposable();
         }
     }
 
     private void handleStartAction(MediaPlayerServiceModel mediaPlayerServiceModel) {
-        resetAction();
         UIUtils.dismissProgressBar(progressDialog);
         seekBar.setEnabled(true);
         seekBar.setMax(mediaPlayerServiceModel.getDuration());
@@ -188,9 +198,11 @@ public class SikhCentreMediaPlayer implements View.OnClickListener, SeekBar.OnSe
                 .subscribe(new Consumer<Long>() {
                     @Override
                     public void accept(@NonNull Long aLong) throws Exception {
-                        setAction(CHECK_STATUS);
                         LOGGER.debug("brinder get time");
-                        mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel(MediaPlayerModel.Action.CHECK_STATUS));
+                        mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel.Builder()
+                                .serviceAction(MediaPlayerModel.Action.CHECK_STATUS)
+                                .playerAction(CHECK_STATUS)
+                                .build());
                     }
                 });
     }
@@ -204,7 +216,6 @@ public class SikhCentreMediaPlayer implements View.OnClickListener, SeekBar.OnSe
 
     private void handleGetTimingAction(MediaPlayerServiceModel mediaPlayerServiceModel) {
         LOGGER.debug("brinder setting time");
-        resetAction();
         String totalTime = convertMillisToTimeString(mediaPlayerServiceModel.getDuration());
         String pendingTime = convertMillisToTimeString(mediaPlayerServiceModel.getCurrentPosition());
         durationTV.setText(pendingTime + "/" + totalTime);
@@ -221,10 +232,13 @@ public class SikhCentreMediaPlayer implements View.OnClickListener, SeekBar.OnSe
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        LOGGER.debug("Brinder Seek Bar Moved");
         if (fromUser) {
-            setAction(SEEK_BAR_MOVED);
-            mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel(MediaPlayerModel.Action.SEEK, progress));
+            LOGGER.info("Brinder Seek Bar Moved");
+            mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel.Builder()
+                    .serviceAction(MediaPlayerModel.Action.SEEK)
+                    .seekToTime(progress)
+                    .playerAction(SEEK_BAR_MOVED)
+                    .build());
             showBufferingDialog();
         }
     }
@@ -240,18 +254,8 @@ public class SikhCentreMediaPlayer implements View.OnClickListener, SeekBar.OnSe
     }
 
     private void handleSeekBarMovedAction() {
-        LOGGER.debug("Brinder Seek Bar Moved Complete");
+        LOGGER.info("Brinder Seek Bar Moved Complete");
         UIUtils.dismissProgressBar(progressDialog);
-        resetAction();
     }
 
-    public void setAction(Action action) {
-        if (this.action == NONE) {
-            this.action = action;
-        }
-    }
-
-    public void resetAction() {
-        this.action = NONE;
-    }
 }

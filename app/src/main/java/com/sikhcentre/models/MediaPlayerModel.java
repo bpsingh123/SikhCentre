@@ -1,5 +1,7 @@
 package com.sikhcentre.models;
 
+import com.sikhcentre.media.SikhCentreMediaPlayer.PlayerAction;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +11,13 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MediaPlayerModel {
+    private MediaPlayerModel(Builder builder) {
+        setPlayerAction(builder.playerAction);
+        setAction(builder.action);
+        setSeekToTime(builder.seekToTime);
+        setUrl(builder.url);
+    }
+
     public enum Action {
         PLAY,
         PAUSE,
@@ -16,25 +25,45 @@ public class MediaPlayerModel {
         SEEK,
         CHECK_STATUS,
         CHANGE,
-        GET_TIMING
     }
 
-    public MediaPlayerModel(Action action, int seekToTime) {
-        this(action);
-        this.seekToTime = seekToTime;
-    }
-
-    public MediaPlayerModel(Action action, String url) {
-        this(action);
-        this.url = url;
-    }
-
-    public MediaPlayerModel(Action action) {
-        this.action = action;
-    }
-
-
+    private PlayerAction playerAction;
     private Action action;
     private int seekToTime;
     private String url;
+
+
+    public static final class Builder {
+        private PlayerAction playerAction;
+        private Action action;
+        private int seekToTime;
+        private String url;
+
+        public Builder() {
+        }
+
+        public Builder playerAction(PlayerAction val) {
+            playerAction = val;
+            return this;
+        }
+
+        public Builder serviceAction(Action val) {
+            action = val;
+            return this;
+        }
+
+        public Builder seekToTime(int val) {
+            seekToTime = val;
+            return this;
+        }
+
+        public Builder url(String val) {
+            url = val;
+            return this;
+        }
+
+        public MediaPlayerModel build() {
+            return new MediaPlayerModel(this);
+        }
+    }
 }

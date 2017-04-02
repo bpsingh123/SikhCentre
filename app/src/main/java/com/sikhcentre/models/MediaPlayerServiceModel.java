@@ -1,5 +1,7 @@
 package com.sikhcentre.models;
 
+import com.sikhcentre.media.SikhCentreMediaPlayer;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,12 +15,14 @@ public class MediaPlayerServiceModel {
     private int duration;
     private boolean isBuffering;
     private int currentPosition;
+    private SikhCentreMediaPlayer.PlayerAction playerAction;
 
     private MediaPlayerServiceModel(Builder builder) {
         setPlaying(builder.playing);
         setDuration(builder.duration);
         setBuffering(builder.isBuffering);
         setCurrentPosition(builder.currentPosition);
+        setPlayerAction(builder.playerAction);
     }
 
 
@@ -27,6 +31,7 @@ public class MediaPlayerServiceModel {
         private int duration;
         private boolean isBuffering;
         private int currentPosition;
+        private SikhCentreMediaPlayer.PlayerAction playerAction;
 
         public Builder() {
         }
@@ -48,6 +53,11 @@ public class MediaPlayerServiceModel {
 
         public Builder currentPosition(int val) {
             currentPosition = val;
+            return this;
+        }
+
+        public Builder playerAction(SikhCentreMediaPlayer.PlayerAction val) {
+            playerAction = val;
             return this;
         }
 
