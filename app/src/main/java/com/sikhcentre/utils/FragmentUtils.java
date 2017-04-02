@@ -27,11 +27,11 @@ public class FragmentUtils {
         if (myFragment == null || !myFragment.isVisible()) {
             myFragment = fragment;
         }
+        myFragment.setArguments(bundle);
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        myFragment.setArguments(bundle);
-        transaction.replace(containerId, myFragment, fragmentTag.name());
-        transaction.addToBackStack(null);
+        transaction = transaction.replace(containerId, myFragment, fragmentTag.name());
+        transaction = transaction.addToBackStack(null);
         transaction.commit();
     }
 }

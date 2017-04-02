@@ -32,7 +32,6 @@ import io.reactivex.functions.Consumer;
 
 public class TopicListFragment extends BaseFragment {
     private TopicListAdapter topicListAdapter;
-//    private SikhCentreMediaPlayer sikhCentreMediaPlayer;
 
     @NonNull
     private CompositeDisposable subscription;
@@ -74,7 +73,6 @@ public class TopicListFragment extends BaseFragment {
                 layoutManager.getOrientation());
         topicRecyclerView.addItemDecoration(dividerItemDecoration);
 
-//        sikhCentreMediaPlayer = new SikhCentreMediaPlayer(getActivity(), R.id.toolbar_audio);
     }
 
     @Override
@@ -82,6 +80,7 @@ public class TopicListFragment extends BaseFragment {
         super.onResume();
         LOGGER.debug("onResume");
         bind();
+        searchViewModel.handleSearchTopic("");
     }
 
     @Override
@@ -110,36 +109,12 @@ public class TopicListFragment extends BaseFragment {
                     }
 
                 }));
-
-//        subscription.add(searchViewModel.getSelectedTopicSubjectAsObservable()
-//                .observeOn(schedulerProvider.ui())
-//                .subscribe(new Consumer<Topic>() {
-//
-//                    @Override
-//                    public void accept(@io.reactivex.annotations.NonNull Topic topic) throws Exception {
-//                        LOGGER.debug("accept: {}", topic.getTopicType());
-//                        switch (topic.getTopicType()) {
-//                            case AUDIO:
-//                                sikhCentreMediaPlayer.start(getActivity(), topic);
-//                                break;
-//                            case PDF:
-//                                SikhCentrePdfReader.INSTANCE.handlePdfTopic(getActivity(), topic);
-//                            default:
-//                                sikhCentreMediaPlayer.stop();
-//                        }
-//
-//                    }
-//                }));
-
-//        sikhCentreMediaPlayer.bind();
-
     }
 
     private void unBind() {
         LOGGER.debug("unBind");
         if (subscription != null) {
             subscription.dispose();
-//            sikhCentreMediaPlayer.unbind();
         }
     }
 }
