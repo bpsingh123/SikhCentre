@@ -16,6 +16,8 @@ public class MediaPlayerModel {
         setAction(builder.action);
         setSeekToTime(builder.seekToTime);
         setUrl(builder.url);
+        setForwardTime(builder.forwardTime);
+        setRewindTime(builder.rewindTime);
     }
 
     public enum Action {
@@ -25,12 +27,16 @@ public class MediaPlayerModel {
         SEEK,
         CHECK_STATUS,
         CHANGE,
+        FORWARD,
+        REWIND
     }
 
     private PlayerAction playerAction;
     private Action action;
     private int seekToTime;
     private String url;
+    private int forwardTime;
+    private int rewindTime;
 
 
     public static final class Builder {
@@ -38,6 +44,8 @@ public class MediaPlayerModel {
         private Action action;
         private int seekToTime;
         private String url;
+        private int forwardTime;
+        private int rewindTime;
 
         public Builder() {
         }
@@ -47,7 +55,7 @@ public class MediaPlayerModel {
             return this;
         }
 
-        public Builder serviceAction(Action val) {
+        public Builder action(Action val) {
             action = val;
             return this;
         }
@@ -59,6 +67,16 @@ public class MediaPlayerModel {
 
         public Builder url(String val) {
             url = val;
+            return this;
+        }
+
+        public Builder forwardTime(int val) {
+            forwardTime = val;
+            return this;
+        }
+
+        public Builder rewindTime(int val) {
+            rewindTime = val;
             return this;
         }
 

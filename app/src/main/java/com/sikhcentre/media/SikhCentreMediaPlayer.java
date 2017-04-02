@@ -2,7 +2,6 @@ package com.sikhcentre.media;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
@@ -38,9 +37,11 @@ import static com.sikhcentre.media.SikhCentreMediaPlayer.PlayerAction.SEEK_BAR_M
  */
 
 public class SikhCentreMediaPlayer implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+    private final ImageView rewindButton;
+    private final ImageView forwardButton;
     private Toolbar audioToolbar;
     private MediaPlayerViewModel mediaPlayerViewModel;
-    private ImageView imageView;
+    private ImageView playPauseButton;
     private SeekBar seekBar;
     private CompositeDisposable compositeDisposable;
     private Activity context;
@@ -54,7 +55,8 @@ public class SikhCentreMediaPlayer implements View.OnClickListener, SeekBar.OnSe
         START,
         BUTTON_CLICK,
         CHECK_STATUS,
-        SEEK_BAR_MOVED
+        SEEK_BAR_MOVED,
+        STOPPED
     }
 
     public SikhCentreMediaPlayer(Activity context, int toolbarId) {
@@ -63,17 +65,43 @@ public class SikhCentreMediaPlayer implements View.OnClickListener, SeekBar.OnSe
         mediaPlayerViewModel = MediaPlayerViewModel.INSTANCE;
 
         audioToolbar = (Toolbar) context.findViewById(toolbarId);
-        imageView = (ImageView) context.findViewById(R.id.iv_play);
+        playPauseButton = (ImageView) context.findViewById(R.id.iv_play);
+        rewindButton = (ImageView) context.findViewById(R.id.iv_rewind);
+        forwardButton = (ImageView) context.findViewById(R.id.iv_forward);
         seekBar = (SeekBar) context.findViewById(R.id.seekbar);
         seekBar.setOnSeekBarChangeListener(this);
         seekBar.setEnabled(false);
         durationTV = (TextView) context.findViewById(R.id.tv_time);
 
-        imageView.setOnClickListener(this);
+        playPauseButton.setOnClickListener(this);
         audioToolbar.setVisibility(View.GONE);
+
+        forwardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel.Builder()
+                        .action(MediaPlayerModel.Action.FORWARD)
+                        .forwardTime(5000)
+                        .playerAction(SEEK_BAR_MOVED)
+                        .build());
+                showBufferingDialog();
+            }
+        });
+
+        rewindButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel.Builder()
+                        .action(MediaPlayerModel.Action.REWIND)
+                        .rewindTime(5000)
+                        .playerAction(SEEK_BAR_MOVED)
+                        .build());
+                showBufferingDialog();
+            }
+        });
     }
 
-    public void start(Context context, Topic topic) {
+    public void start(Topic topic) {
         if (!NetworkUtils.isNetworkAvailable(context)) {
             return;
         }
@@ -87,7 +115,7 @@ public class SikhCentreMediaPlayer implements View.OnClickListener, SeekBar.OnSe
             LOGGER.debug("start through event");
             mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel.Builder()
                     .playerAction(PlayerAction.START)
-                    .serviceAction(MediaPlayerModel.Action.CHANGE)
+                    .action(MediaPlayerModel.Action.CHANGE)
                     .url(topic.getUrl())
                     .build());
             isMediaPlayerServiceStarted = true;
@@ -96,7 +124,6 @@ public class SikhCentreMediaPlayer implements View.OnClickListener, SeekBar.OnSe
         if (isMediaPlayerServiceStarted) {
             showBufferingDialog();
         }
-
         this.topic = topic;
     }
 
@@ -109,7 +136,7 @@ public class SikhCentreMediaPlayer implements View.OnClickListener, SeekBar.OnSe
 
     public void stop() {
         mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel.Builder()
-                .serviceAction(MediaPlayerModel.Action.STOP)
+                .action(MediaPlayerModel.Action.STOP)
                 .build());
         audioToolbar.setVisibility(View.GONE);
         unbind();
@@ -118,11 +145,15 @@ public class SikhCentreMediaPlayer implements View.OnClickListener, SeekBar.OnSe
     @Override
     public void onClick(View view) {
         LOGGER.debug("onClick");
-        mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel.Builder()
-                .playerAction(BUTTON_CLICK)
-                .serviceAction(MediaPlayerModel.Action.CHECK_STATUS)
-                .seekToTime(0)
-                .build());
+        if (MediaPlayerService.isServiceRunning()) {
+            mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel.Builder()
+                    .playerAction(BUTTON_CLICK)
+                    .action(MediaPlayerModel.Action.CHECK_STATUS)
+                    .seekToTime(0)
+                    .build());
+        } else {
+            start(topic);
+        }
     }
 
     public void bind() {
@@ -149,6 +180,9 @@ public class SikhCentreMediaPlayer implements View.OnClickListener, SeekBar.OnSe
                                        case SEEK_BAR_MOVED:
                                            handleSeekBarMovedAction();
                                            break;
+                                       case STOPPED:
+                                           handleStoppedAction(mediaPlayerServiceModel);
+                                           break;
                                    }
                                }
                            }
@@ -166,16 +200,16 @@ public class SikhCentreMediaPlayer implements View.OnClickListener, SeekBar.OnSe
 
     private void handleButtonClickAction(MediaPlayerServiceModel mediaPlayerServiceModel) {
         if (mediaPlayerServiceModel.isPlaying()) {
-            imageView.setImageResource(R.drawable.ic_play_circle_outline_blue_900_24dp);
+            playPauseButton.setImageResource(R.drawable.ic_play_circle_outline_blue_900_24dp);
             mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel.Builder()
-                    .serviceAction(MediaPlayerModel.Action.PAUSE)
+                    .action(MediaPlayerModel.Action.PAUSE)
                     .playerAction(CHECK_STATUS)
                     .build());
             stopGetTimingDisposable();
         } else {
-            imageView.setImageResource(R.drawable.ic_pause_circle_outline_blue_900_24dp);
+            playPauseButton.setImageResource(R.drawable.ic_pause_circle_outline_blue_900_24dp);
             mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel.Builder()
-                    .serviceAction(MediaPlayerModel.Action.PLAY)
+                    .action(MediaPlayerModel.Action.PLAY)
                     .playerAction(CHECK_STATUS)
                     .build());
             startGetTimingDisposable();
@@ -187,7 +221,7 @@ public class SikhCentreMediaPlayer implements View.OnClickListener, SeekBar.OnSe
         seekBar.setEnabled(true);
         seekBar.setMax(mediaPlayerServiceModel.getDuration());
         handleGetTimingAction(mediaPlayerServiceModel);
-        imageView.setImageResource(R.drawable.ic_pause_circle_outline_blue_900_24dp);
+        playPauseButton.setImageResource(R.drawable.ic_pause_circle_outline_blue_900_24dp);
         startGetTimingDisposable();
     }
 
@@ -200,7 +234,7 @@ public class SikhCentreMediaPlayer implements View.OnClickListener, SeekBar.OnSe
                     public void accept(@NonNull Long aLong) throws Exception {
                         LOGGER.debug("brinder get time");
                         mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel.Builder()
-                                .serviceAction(MediaPlayerModel.Action.CHECK_STATUS)
+                                .action(MediaPlayerModel.Action.CHECK_STATUS)
                                 .playerAction(CHECK_STATUS)
                                 .build());
                     }
@@ -216,6 +250,7 @@ public class SikhCentreMediaPlayer implements View.OnClickListener, SeekBar.OnSe
 
     private void handleGetTimingAction(MediaPlayerServiceModel mediaPlayerServiceModel) {
         LOGGER.debug("brinder setting time");
+        seekBar.setProgress(mediaPlayerServiceModel.getCurrentPosition());
         String totalTime = convertMillisToTimeString(mediaPlayerServiceModel.getDuration());
         String pendingTime = convertMillisToTimeString(mediaPlayerServiceModel.getCurrentPosition());
         durationTV.setText(pendingTime + "/" + totalTime);
@@ -235,7 +270,7 @@ public class SikhCentreMediaPlayer implements View.OnClickListener, SeekBar.OnSe
         if (fromUser) {
             LOGGER.info("Brinder Seek Bar Moved");
             mediaPlayerViewModel.handlePlayerAction(new MediaPlayerModel.Builder()
-                    .serviceAction(MediaPlayerModel.Action.SEEK)
+                    .action(MediaPlayerModel.Action.SEEK)
                     .seekToTime(progress)
                     .playerAction(SEEK_BAR_MOVED)
                     .build());
@@ -256,6 +291,14 @@ public class SikhCentreMediaPlayer implements View.OnClickListener, SeekBar.OnSe
     private void handleSeekBarMovedAction() {
         LOGGER.info("Brinder Seek Bar Moved Complete");
         UIUtils.dismissProgressBar(progressDialog);
+    }
+
+    private void handleStoppedAction(MediaPlayerServiceModel mediaPlayerServiceModel) {
+        LOGGER.info("Brinder Stopped");
+        seekBar.setProgress(0);
+        seekBar.setEnabled(false);
+        playPauseButton.setImageResource(R.drawable.ic_play_circle_outline_blue_900_24dp);
+        handleGetTimingAction(mediaPlayerServiceModel);
     }
 
 }

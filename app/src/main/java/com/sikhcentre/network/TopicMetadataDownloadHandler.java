@@ -76,7 +76,8 @@ public class TopicMetadataDownloadHandler {
         }
         for (MetaDataResponse.TopicResponse topicResponse : metaDataResponse.getTopics()) {
             topicList.add(new Topic(topicResponse.getId(), topicResponse.getTitle(),
-                    topicResponse.getUrl(), topicResponse.getType()));
+                    topicResponse.getUrl(), topicResponse.getInfo(), topicResponse.getContent(),
+                    topicResponse.getType()));
             for (Long id : topicResponse.getAuthorIds()) {
                 topicAuthorList.add(new TopicAuthor(null, topicResponse.getId(), id));
             }

@@ -27,11 +27,24 @@
                     android:orientation="vertical"
                     android:paddingLeft="@dimen/medium_dimen">
 
-                    <TextView
-                        android:id="@+id/topicDetailTextViewTitle"
-                        style="@style/titleTextStyle"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/topicDetailTextViewTitle"
+                            style="@style/titleTextStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <ImageView
+                            android:id="@+id/topicDetailImageViewItemType"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center" />
+
+                    </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/topicDetailLLFileView"
@@ -42,29 +55,29 @@
                             android:id="@+id/topicDetailOpenFile"
                             android:layout_width="0px"
                             android:layout_height="wrap_content"
+                            android:layout_weight=".5"
                             android:drawableLeft="@drawable/ic_folder_open_blue_900_24dp"
                             android:drawableStart="@drawable/ic_folder_open_blue_900_24dp"
-                            android:text="@string/detail_view_button_file_open"
-                            android:layout_weight=".5"/>
+                            android:text="@string/detail_view_button_file_open" />
 
                         <Button
                             android:id="@+id/topicDetailDownloadFile"
                             android:layout_width="0px"
                             android:layout_height="wrap_content"
+                            android:layout_weight=".5"
                             android:drawableLeft="@drawable/ic_file_download_blue_900_24dp"
                             android:drawableStart="@drawable/ic_file_download_blue_900_24dp"
-                            android:text="@string/detail_view_button_file_download"
-                            android:layout_weight=".5"/>
+                            android:text="@string/detail_view_button_file_download" />
 
                         <Button
                             android:id="@+id/topicDetailDeleteFile"
                             android:layout_width="0px"
                             android:layout_height="wrap_content"
+                            android:layout_weight=".5"
                             android:drawableLeft="@drawable/ic_delete_forever_red_900_24dp"
                             android:drawableStart="@drawable/ic_delete_forever_red_900_24dp"
                             android:text="@string/detail_view_button_file_delete"
-                            android:layout_weight=".5"
-                            android:visibility="gone"/>
+                            android:visibility="gone" />
                     </LinearLayout>
 
                     <FrameLayout

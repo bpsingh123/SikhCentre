@@ -88,12 +88,12 @@ public class TopicDetailViewModel {
         return row;
     }
 
-    public void handleTopic(Activity activity, LinearLayout linearLayoutFileView,
+    public void handleTopic(LinearLayout linearLayoutFileView,
                             Button openFileButton, Button downloadFileButton, Button deleteFileButton) {
         LOGGER.debug("handleTopic: {}", topic.getTopicType());
         switch (topic.getTopicType()) {
             case AUDIO:
-                sikhCentreMediaPlayer.start(activity, topic);
+                sikhCentreMediaPlayer.start(topic);
                 linearLayoutFileView.setVisibility(View.GONE);
                 break;
             case PDF:

@@ -21,6 +21,8 @@ public class MetaDataResponse {
         private Long id;
         private String title;
         private String url;
+        private String info;
+        private String content;
         private Topic.TopicType type;
         private List<Long> authorIds = new ArrayList<>();
         private List<TopicTagResponse> tags = new ArrayList<>();

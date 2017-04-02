@@ -98,7 +98,7 @@ public class TopicDetailFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        topicDetailViewModel.handleTopic(getActivity(), linearLayoutFileView, openFileButton,
+        topicDetailViewModel.handleTopic(linearLayoutFileView, openFileButton,
                 downloadFileButton, deleteFileButton);
         bind();
     }

@@ -125,6 +125,12 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
                                 case SEEK:
                                     handleSeek(mediaPlayerModel);
                                     break;
+                                case FORWARD:
+                                    handleForward(mediaPlayerModel);
+                                    break;
+                                case REWIND:
+                                    handleRewind(mediaPlayerModel);
+                                    break;
                             }
                         } catch (Exception e) {
                             LOGGER.error("onNext: ", e);
@@ -146,6 +152,14 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     private void handleSeek(MediaPlayerModel mediaPlayerModel) {
         mediaPlayer.seekTo(mediaPlayerModel.getSeekToTime());
+    }
+
+    private void handleForward(MediaPlayerModel mediaPlayerModel) {
+        mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() + mediaPlayerModel.getForwardTime());
+    }
+
+    private void handleRewind(MediaPlayerModel mediaPlayerModel) {
+        mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() - mediaPlayerModel.getRewindTime());
     }
 
     public void unbind() {
@@ -177,6 +191,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
+        mediaPlayerViewModel.handlePlayerServiceAction(getMediaPlayerInfo(mediaPlayer, SikhCentreMediaPlayer.PlayerAction.STOPPED));
         stop();
     }
 

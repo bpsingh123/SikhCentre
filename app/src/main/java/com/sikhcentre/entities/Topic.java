@@ -30,6 +30,8 @@ public class Topic implements Parcelable{
     private Long id;
     private String title;
     private String url;
+    private String info;
+    private String content;
 
     @Convert(converter = TopicTypeConverter.class, columnType = Integer.class)
     private TopicType topicType;
@@ -69,11 +71,13 @@ public class Topic implements Parcelable{
     @Generated(hash = 694021448)
     private transient TopicDao myDao;
 
-    @Generated(hash = 788151660)
-    public Topic(Long id, String title, String url, TopicType topicType) {
+    @Generated(hash = 461814294)
+    public Topic(Long id, String title, String url, String info, String content, TopicType topicType) {
         this.id = id;
         this.title = title;
         this.url = url;
+        this.info = info;
+        this.content = content;
         this.topicType = topicType;
     }
 
@@ -86,6 +90,8 @@ public class Topic implements Parcelable{
         topicType = TopicType.valueOf(in.readString());
         title = in.readString();
         url = in.readString();
+        info = in.readString();
+        content = in.readString();
         authors = in.createTypedArrayList(Author.CREATOR);
         references = in.createTypedArrayList(Reference.CREATOR);
         topicTags = in.createTypedArrayList(TopicTag.CREATOR);
@@ -103,6 +109,8 @@ public class Topic implements Parcelable{
         parcel.writeString(topicType.name());
         parcel.writeString(title);
         parcel.writeString(url);
+        parcel.writeString(info);
+        parcel.writeString(content);
         parcel.writeTypedList(authors);
         parcel.writeTypedList(references);
         parcel.writeTypedList(topicTags);
@@ -387,10 +395,28 @@ public class Topic implements Parcelable{
         references = null;
     }
 
+    public String getInfo() {
+        return this.info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
+    public String getContent() {
+        return this.content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
     /** called by internal mechanisms, do not call yourself. */
     @Generated(hash = 1373867845)
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getTopicDao() : null;
     }
+
+
 }
