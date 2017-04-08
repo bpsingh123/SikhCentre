@@ -2,7 +2,8 @@
     <string name="app_name">Sikh Centre</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="list_view_button_filter">Filter</string>
 
     <string name="menu_item_string_refresh">Refresh</string>
     <string name="menu_item_string_settings">Settings</string>
@@ -14,7 +15,7 @@
     <string name="loading_indicator_title">Please Wait</string>
     <string name="loading_indicator_loading_metadata_text">Refreshing app data</string>
     <string name="loading_indicator_loading_file_text">Downloading File</string>
-    <string name="loading_indicator_buffering">Buffering...</string>
+    <string name="loading_indicator_buffering">Buffering…</string>
 
     <string name="error_message_downloading_metadata">Error occurred while downloading information</string>
     <string name="error_message_downloading_file">Error occurred while downloading file</string>
@@ -30,5 +31,13 @@
     <string name="detail_view_button_file_open">Open</string>
     <string name="detail_view_button_file_download">Download</string>
     <string name="detail_view_button_file_delete">Delete</string>
+
+
+    <string name="filter_view_button_cancel">Cancel</string>
+    <string name="filter_view_button_apply">Apply</string>
+    <string name="filter_view_button_clear">Clear</string>
+    <string name="filter_view_title">Filter Topics</string>
+
+
 
 </resources>

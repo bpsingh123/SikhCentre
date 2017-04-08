@@ -39,6 +39,14 @@
         <item name="android:gravity">left</item>
     </style>
 
+    <style name="transparentButtonStyle">
+        <item name="android:textSize">14sp</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:src">@drawable/close_button</item>
+    </style>
+
     <style name="cardStyle">
         <item name="android:gravity">center</item>
         <item name="android:layout_height">wrap_content</item>
@@ -47,6 +55,12 @@
         <item name="cardElevation">@dimen/tiny_dimen</item>
         <item name="contentPadding">@dimen/medium_dimen</item>
         <item name="cardCornerRadius">5dp</item>
+    </style>
+
+    <style name="separator">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/colorPrimaryDark</item>
     </style>
 
 </resources>

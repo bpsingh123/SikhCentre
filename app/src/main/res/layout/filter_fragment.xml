@@ -2,46 +2,60 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:divider="?android:dividerHorizontal"
+    android:showDividers="middle"
+    android:layout_weight="1">
 
     <LinearLayout
+        android:id="@+id/filterFragmentHeaderLL"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="5dp"
+        android:layout_weight=".1">
 
-        <Button
+        <ImageButton
             android:id="@+id/filterFragmentBtnCancel"
-            android:layout_width="0px"
-            android:layout_height="wrap_content"
-            android:layout_weight=".25"
-            android:text="Button" />
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".08"
+            android:background="@null"
+            android:src="@drawable/close_button"/>
 
         <TextView
             android:id="@+id/filterFragmentTVTitle"
             android:layout_width="0px"
             android:layout_height="wrap_content"
-            android:layout_weight=".25"
-            android:text="Button" />
+            android:layout_weight=".6"
+            android:text="@string/filter_view_title"
+            android:clickable="true"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/filterFragmentBtnClear"
             android:layout_width="0px"
-            android:layout_height="wrap_content"
-            android:layout_weight=".25"
-            android:text="Button" />
+            android:layout_height="match_parent"
+            android:layout_weight=".08"
+            android:background="@null"
+            android:src="@drawable/clear_filter_button"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/filterFragmentBtnApply"
             android:layout_width="0px"
-            android:layout_height="wrap_content"
-            android:layout_weight=".25"
-            android:text="Button" />
+            android:layout_height="match_parent"
+            android:layout_weight=".08"
+            android:background="@null"
+            android:src="@drawable/apply_filter_button"/>
+
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:divider="?android:dividerVertical"
+        android:showDividers="middle"
+        android:layout_weight=".9">
 
         <LinearLayout
             android:layout_width="0px"
@@ -55,21 +69,26 @@
                 android:layout_height="match_parent" />
         </LinearLayout>
 
+
         <LinearLayout
             android:layout_width="0px"
             android:layout_height="match_parent"
             android:layout_weight=".5"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:divider="?android:dividerHorizontal"
+            android:showDividers="middle">
 
             <SearchView
                 android:id="@+id/filterFragmentSearch"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/filterFragmentRVFilterValues"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </LinearLayout>
+    <View
+        style="@style/separator"/>
 </LinearLayout>

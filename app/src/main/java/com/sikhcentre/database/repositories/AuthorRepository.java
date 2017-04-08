@@ -8,6 +8,7 @@ import com.sikhcentre.entities.Topic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,9 +25,7 @@ public class AuthorRepository {
 
     public static Set<Topic> getTopicSet(String txt) {
         try {
-            List<Author> authors = DbUtils.INSTANCE.getDaoSession().getAuthorDao().queryBuilder()
-                    .where(AuthorDao.Properties.Name.like("%" + txt + "%"))
-                    .list();
+            List<Author> authors = getAuthorList(txt);
             Set<Topic> topics = new HashSet<>();
             for (Author author : authors) {
                 topics.addAll(author.getTopics());
@@ -34,8 +33,19 @@ public class AuthorRepository {
             return topics;
 
         } catch (Exception e) {
-            LOGGER.error( "getTopicSet:" + txt, e);
+            LOGGER.error("getTopicSet:" + txt, e);
         }
         return new HashSet<>();
+    }
+
+    public static List<Author> getAuthorList(String txt) {
+        try {
+            return DbUtils.INSTANCE.getDaoSession().getAuthorDao().queryBuilder()
+                    .where(AuthorDao.Properties.Name.like("%" + txt + "%"))
+                    .list();
+        } catch (Exception e) {
+            LOGGER.error("getAuthorList:" + txt, e);
+        }
+        return new ArrayList<>();
     }
 }
