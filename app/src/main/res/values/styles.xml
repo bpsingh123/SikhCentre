@@ -63,4 +63,18 @@
         <item name="android:background">@color/colorPrimaryDark</item>
     </style>
 
+    <style name="buttonStyle">
+        <item name="android:background">@drawable/selector_button</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:colorPressedHighlight">@android:color/white</item>
+    </style>
+
+    <style name="buttonStyleWithMargin">
+        <item name="android:background">@drawable/selector_button</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:colorPressedHighlight">@android:color/white</item>
+        <item name="android:layout_margin">@dimen/small_dimen</item>
+    </style>
+
+
 </resources>

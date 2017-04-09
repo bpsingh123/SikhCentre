@@ -18,6 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_alignParentBottom="true"
-        android:text="@string/list_view_button_filter" />
+        android:text="@string/list_view_button_filter"
+        style="@style/buttonStyle"/>
 
 </RelativeLayout>

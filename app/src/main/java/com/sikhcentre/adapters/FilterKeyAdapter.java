@@ -21,6 +21,7 @@ public class FilterKeyAdapter extends RecyclerView.Adapter<FilterKeyAdapter.Filt
 
     private List<FilterModel> filterModelList;
     private AdapterView.OnItemClickListener onItemClickListener;
+    private int selectedItemPos = 0;
 
     public FilterKeyAdapter(List<FilterModel> filterModelList, AdapterView.OnItemClickListener onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
@@ -36,7 +37,7 @@ public class FilterKeyAdapter extends RecyclerView.Adapter<FilterKeyAdapter.Filt
 
     @Override
     public void onBindViewHolder(FilterKeyViewHolder holder, int position) {
-        holder.bindTopic(filterModelList.get(position));
+        holder.bindTopic(position);
     }
 
     public FilterModel getFilterAt(int pos) {
@@ -49,7 +50,7 @@ public class FilterKeyAdapter extends RecyclerView.Adapter<FilterKeyAdapter.Filt
         return filterModelList != null ? filterModelList.size() : 0;
     }
 
-    static class FilterKeyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class FilterKeyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView filterKeyTV;
         private AdapterView.OnItemClickListener onItemClickListener;
         private LinearLayout linearLayoutFilterKeyItem;
@@ -62,13 +63,20 @@ public class FilterKeyAdapter extends RecyclerView.Adapter<FilterKeyAdapter.Filt
             this.onItemClickListener = onItemClickListener;
         }
 
-        void bindTopic(FilterModel filterModel) {
-            filterKeyTV.setText(filterModel.getKey());
+        void bindTopic(int position) {
+            filterKeyTV.setText(filterModelList.get(position).getKey());
+            if (selectedItemPos == position) {
+                linearLayoutFilterKeyItem.setSelected(true);
+            } else {
+                linearLayoutFilterKeyItem.setSelected(false);
+            }
         }
 
         @Override
         public void onClick(View view) {
+            selectedItemPos = getAdapterPosition();
             onItemClickListener.onItemClick(null, view, getAdapterPosition(), view.getId());
+            notifyDataSetChanged();
         }
     }
 }

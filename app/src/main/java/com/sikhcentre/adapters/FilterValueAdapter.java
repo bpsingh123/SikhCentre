@@ -18,6 +18,8 @@ import java.util.List;
 
 import lombok.Getter;
 
+import static com.sikhcentre.utils.ListUtils.getListSize;
+
 /**
  * Created by brinder.singh on 29/01/17.
  */
@@ -97,10 +99,6 @@ public class FilterValueAdapter extends RecyclerView.Adapter<FilterValueAdapter.
                 return getListSize(topicTypeList);
         }
         return 0;
-    }
-
-    private int getListSize(List list) {
-        return list != null ? list.size() : 0;
     }
 
     @Getter
