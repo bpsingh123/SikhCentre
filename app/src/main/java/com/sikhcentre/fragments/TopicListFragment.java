@@ -10,12 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 
 import com.sikhcentre.R;
 import com.sikhcentre.adapters.TopicListAdapter;
 import com.sikhcentre.entities.Topic;
 import com.sikhcentre.schedulers.ISchedulerProvider;
 import com.sikhcentre.schedulers.MainSchedulerProvider;
+import com.sikhcentre.utils.FragmentUtils;
 import com.sikhcentre.viewmodel.SearchViewModel;
 
 import org.slf4j.Logger;
@@ -41,6 +43,8 @@ public class TopicListFragment extends BaseFragment {
 
     @NonNull
     ISchedulerProvider schedulerProvider = MainSchedulerProvider.INSTANCE;
+
+    private Button filterButton;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TopicListFragment.class);
 
@@ -72,6 +76,15 @@ public class TopicListFragment extends BaseFragment {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(topicRecyclerView.getContext(),
                 layoutManager.getOrientation());
         topicRecyclerView.addItemDecoration(dividerItemDecoration);
+
+        filterButton = (Button) getView().findViewById(R.id.topic_list_filter);
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentUtils.replaceFragment(R.id.container_framelayout, new FilterFragment(),
+                        getActivity().getIntent().getExtras(), getActivity().getSupportFragmentManager(), FragmentUtils.FragmentTag.FILTER);
+            }
+        });
 
     }
 

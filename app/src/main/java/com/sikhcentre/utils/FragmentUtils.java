@@ -12,7 +12,8 @@ import android.support.v4.app.FragmentTransaction;
 public class FragmentUtils {
     public enum FragmentTag {
         TOPIC_LIST,
-        TOPIC_DETAIL
+        TOPIC_DETAIL,
+        FILTER
     }
 
     public static void createFragment(int containerId, Fragment fragment, Bundle bundle,
@@ -34,4 +35,11 @@ public class FragmentUtils {
         transaction = transaction.addToBackStack(null);
         transaction.commit();
     }
+
+    public static void removeCurrentFragment(Fragment fragment, FragmentManager fragmentManager) {
+        fragmentManager.beginTransaction().remove(fragment).commit();
+        fragmentManager.popBackStack();
+    }
+
+
 }

@@ -57,7 +57,7 @@ public class DownloadFileHandler {
 
     public Observable<String> downloadTopic(final Context context, final Topic topic, final String filePath) {
 
-        if(!NetworkUtils.isNetworkAvailable(context)){
+        if (!NetworkUtils.isNetworkAvailable(context)) {
             fileUrlSubject.onNext(null);
         }
 
@@ -73,7 +73,7 @@ public class DownloadFileHandler {
 
         responseBodyObservable = downloadFileClient.downloadFile(topic.getUrl())
                 .subscribeOn(MainSchedulerProvider.INSTANCE.computation())
-                .observeOn(MainSchedulerProvider.INSTANCE.computation())
+                .observeOn(MainSchedulerProvider.INSTANCE.ui())
                 .subscribe(new Consumer<ResponseBody>() {
                     @Override
                     public void accept(@NonNull final ResponseBody responseBody) throws Exception {
@@ -88,6 +88,7 @@ public class DownloadFileHandler {
                             }
 
                         }).subscribeOn(MainSchedulerProvider.INSTANCE.computation())
+                                .observeOn(MainSchedulerProvider.INSTANCE.ui())
                                 .subscribe(new Observer<Void>() {
 
                                     @Override
@@ -128,7 +129,7 @@ public class DownloadFileHandler {
     private boolean writeResponseBodyToDisk(Context context, ResponseBody body, String url) {
         try {
             File file = new File(FileUtils.getAppDirPathForDiskStorage(context));
-            if(!file.exists()){
+            if (!file.exists()) {
                 file.mkdirs();
             }
 
@@ -179,7 +180,7 @@ public class DownloadFileHandler {
         }
     }
 
-    private static void handleError(Context context, ProgressDialog progressDialog){
+    private static void handleError(Context context, ProgressDialog progressDialog) {
         UIUtils.showToast(context, context.getString(R.string.error_message_downloading_metadata));
         UIUtils.dismissProgressBar(progressDialog);
     }
