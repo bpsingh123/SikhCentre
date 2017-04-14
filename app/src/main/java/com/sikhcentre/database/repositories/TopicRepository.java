@@ -3,7 +3,11 @@ package com.sikhcentre.database.repositories;
 import com.sikhcentre.database.DbUtils;
 import com.sikhcentre.entities.Topic;
 import com.sikhcentre.entities.TopicDao;
+import com.sikhcentre.models.FilterSelectionModel;
+import com.sikhcentre.utils.AppInfoProvider;
 
+import org.greenrobot.greendao.query.QueryBuilder;
+import org.greenrobot.greendao.query.WhereCondition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +24,7 @@ public class TopicRepository {
     private TopicRepository() {
     }
 
-    public static List<Topic> getTopicList(String txt) {
+    public static List<Topic> getTopicList(String txt, boolean applyFilter) {
 //        List<Topic> topicList = new ArrayList<>();
 //        topicList.add(new Topic(1L, "ਰਾਜ਼ਸੀ ਬੁੱਧੀ", "", Topic.TopicType.TEXT));
 //        topicList.add(new Topic(2L, "Topic 2", "", Topic.TopicType.IMAGE));
@@ -31,9 +35,16 @@ public class TopicRepository {
 //        topicList.add(new Topic(7L, "Topic 7", "", Topic.TopicType.TEXT));
 
         try {
-            return DbUtils.INSTANCE.getDaoSession().getTopicDao().queryBuilder()
-                    .where(TopicDao.Properties.Title.like("%" + txt + "%"))
-                    .list();
+            QueryBuilder<Topic> qb = DbUtils.INSTANCE.getDaoSession().getTopicDao().queryBuilder();
+            WhereCondition titleFilter = TopicDao.Properties.Title.like("%" + txt + "%");
+            FilterSelectionModel filterSelectionModel = AppInfoProvider.INSTANCE.getFilterSelectionModel();
+            if (applyFilter && !filterSelectionModel.getTopicTypeSet().isEmpty()) {
+                WhereCondition typeFilter = TopicDao.Properties.TopicType.in(filterSelectionModel.getTopicTypeIdList());
+                qb.where(titleFilter, typeFilter);
+            } else {
+                qb.where(titleFilter);
+            }
+            return qb.list();
         } catch (Exception e) {
             LOGGER.error("getTopicList:" + txt, e);
         }

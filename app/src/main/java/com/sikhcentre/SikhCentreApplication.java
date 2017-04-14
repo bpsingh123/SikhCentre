@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import com.sikhcentre.database.DbUtils;
 import com.sikhcentre.schedulers.ISchedulerProvider;
 import com.sikhcentre.schedulers.MainSchedulerProvider;
+import com.sikhcentre.utils.SCSharedPreferenceManager;
 
 /**
  * Created by brinder.singh on 25/02/17.
@@ -26,5 +27,6 @@ public class SikhCentreApplication extends Application {
 
     public void initialize() {
         DbUtils.INSTANCE.init(getApplicationContext());
+        SCSharedPreferenceManager.INSTANCE.init(getApplicationContext());
     }
 }

@@ -22,6 +22,10 @@ public class TopicTag implements Parcelable{
 
     @ToOne(joinProperty = "topicId")
     private Topic topic;
+
+    @ToOne(joinProperty = "tagId")
+    private Tag tag;
+
     /** Used to resolve relations */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
@@ -61,6 +65,8 @@ public class TopicTag implements Parcelable{
             return new TopicTag[size];
         }
     };
+    @Generated(hash = 1006483784)
+    private transient Long tag__resolvedKey;
 
     @Override
     public int describeContents() {
@@ -170,6 +176,35 @@ public class TopicTag implements Parcelable{
             throw new DaoException("Entity is detached from DAO context");
         }
         myDao.update(this);
+    }
+
+    /** To-one relationship, resolved on first access. */
+    @Generated(hash = 891466911)
+    public Tag getTag() {
+        Long __key = this.tagId;
+        if (tag__resolvedKey == null || !tag__resolvedKey.equals(__key)) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            TagDao targetDao = daoSession.getTagDao();
+            Tag tagNew = targetDao.load(__key);
+            synchronized (this) {
+                tag = tagNew;
+                tag__resolvedKey = __key;
+            }
+        }
+        return tag;
+    }
+
+    /** called by internal mechanisms, do not call yourself. */
+    @Generated(hash = 106711820)
+    public void setTag(Tag tag) {
+        synchronized (this) {
+            this.tag = tag;
+            tagId = tag == null ? null : tag.getId();
+            tag__resolvedKey = tagId;
+        }
     }
 
     /** called by internal mechanisms, do not call yourself. */

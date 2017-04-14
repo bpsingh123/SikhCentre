@@ -12,9 +12,13 @@ import com.sikhcentre.entities.Author;
 import com.sikhcentre.entities.Tag;
 import com.sikhcentre.entities.Topic;
 import com.sikhcentre.models.FilterModel;
+import com.sikhcentre.models.FilterSelectionModel;
+import com.sikhcentre.utils.AppInfoProvider;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import lombok.Getter;
 
@@ -55,21 +59,58 @@ public class FilterValueAdapter extends RecyclerView.Adapter<FilterValueAdapter.
         }
     }
 
+    public void resetFilter() {
+        resetAuthorSelectStateList();
+        resetTopicTypeSelectStateList();
+        resetTagSelectStateList();
+        notifyDataSetChanged();
+    }
+
+    private void resetAuthorSelectStateList() {
+        authorSelectStateList = getBooleanArrayWithDefault(authorList.size(), false);
+    }
+
+    private void resetTagSelectStateList() {
+        tagSelectStateList = getBooleanArrayWithDefault(tagList.size(), false);
+    }
+
+    private void resetTopicTypeSelectStateList() {
+        topicSelectStateTypeList = getBooleanArrayWithDefault(topicTypeList.size(), false);
+    }
+
     public void setAuthorList(List<Author> authorList) {
         this.authorList = authorList;
-        authorSelectStateList = getBooleanArrayWithDefault(authorList.size(), false);
+        resetAuthorSelectStateList();
+        Set<Author> authorSet = AppInfoProvider.INSTANCE.getFilterSelectionModel().getAuthorSet();
+        for (int i = 0; i < authorList.size(); i++) {
+            if (authorSet.contains(authorList.get(i))) {
+                authorSelectStateList[i] = true;
+            }
+        }
         notifyDataSetChanged();
     }
 
     public void setTagList(List<Tag> tagList) {
         this.tagList = tagList;
-        tagSelectStateList = getBooleanArrayWithDefault(tagList.size(), false);
+        resetTagSelectStateList();
+        Set<Tag> tagSet = AppInfoProvider.INSTANCE.getFilterSelectionModel().getTagSet();
+        for (int i = 0; i < tagList.size(); i++) {
+            if (tagSet.contains(tagList.get(i))) {
+                tagSelectStateList[i] = true;
+            }
+        }
         notifyDataSetChanged();
     }
 
     public void setTopicTypeList(List<Topic.TopicType> topicTypeList) {
         this.topicTypeList = topicTypeList;
-        topicSelectStateTypeList = getBooleanArrayWithDefault(topicTypeList.size(), false);
+        resetTopicTypeSelectStateList();
+        Set<Topic.TopicType> topicTypeSet = AppInfoProvider.INSTANCE.getFilterSelectionModel().getTopicTypeSet();
+        for (int i = 0; i < topicTypeList.size(); i++) {
+            if (topicTypeSet.contains(topicTypeList.get(i))) {
+                topicSelectStateTypeList[i] = true;
+            }
+        }
         notifyDataSetChanged();
     }
 
@@ -99,6 +140,29 @@ public class FilterValueAdapter extends RecyclerView.Adapter<FilterValueAdapter.
                 return getListSize(topicTypeList);
         }
         return 0;
+    }
+
+    public FilterSelectionModel getFilterSelectionModel() {
+        Set<Author> authorSet = new HashSet<>();
+        for (int i = 0; i < authorSelectStateList.length; i++) {
+            if (authorSelectStateList[i]) {
+                authorSet.add(this.authorList.get(i));
+            }
+        }
+        Set<Tag> tagSet = new HashSet<>();
+        for (int i = 0; i < tagSelectStateList.length; i++) {
+            if (tagSelectStateList[i]) {
+                tagSet.add(this.tagList.get(i));
+            }
+        }
+        Set<Topic.TopicType> topicTypeSet = new HashSet<>();
+        for (int i = 0; i < topicSelectStateTypeList.length; i++) {
+            if (topicSelectStateTypeList[i]) {
+                topicTypeSet.add(this.topicTypeList.get(i));
+            }
+        }
+
+        return new FilterSelectionModel(authorSet, tagSet, topicTypeSet);
     }
 
     @Getter

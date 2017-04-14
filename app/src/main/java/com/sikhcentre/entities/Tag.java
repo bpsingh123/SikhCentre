@@ -152,11 +152,26 @@ public class Tag implements Parcelable{
         myDao.update(this);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Tag tag = (Tag) o;
+
+        return id.equals(tag.id);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
     /** called by internal mechanisms, do not call yourself. */
     @Generated(hash = 441429822)
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getTagDao() : null;
     }
-
 }

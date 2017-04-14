@@ -75,10 +75,20 @@ public enum SearchViewModel {
     }
 
     private List<Topic> getTopics(String text) {
-        Set<Topic> topics = AuthorRepository.getTopicSet(text);
-        topics.addAll(TagRepository.getTopicSet(text));
-        topics.addAll(TopicRepository.getTopicList(text));
-        return new ArrayList<>(topics);
+        Set<Topic> topicSet = AuthorRepository.getTopicSet(text);
+        topicSet.addAll(TagRepository.getTopicSet(text));
+        topicSet.addAll(TopicRepository.getTopicList(text, true));
+
+        //apply type filter
+        topicSet = FilterViewModel.applyTypeFilterOnTopics(topicSet);
+
+        //apply author filter
+        topicSet = FilterViewModel.applyAuthorFilterOnTopics(topicSet);
+
+        //apply tag filter
+        topicSet = FilterViewModel.applyTagFilterOnTopics(topicSet);
+
+        return new ArrayList<>(topicSet);
     }
 
     public Observable<List<Topic>> getTopicListSubjectAsObservable() {
@@ -101,11 +111,11 @@ public enum SearchViewModel {
         return tagPublishSubject;
     }
 
-    public void handleSearchAuthor(final String text) {
+    public void handleSearchAuthor(final String text, final boolean applyFilter) {
         Observable.create(new ObservableOnSubscribe<List<Author>>() {
             @Override
             public void subscribe(ObservableEmitter<List<Author>> e) throws Exception {
-                e.onNext(AuthorRepository.getAuthorList(text));
+                e.onNext(AuthorRepository.getAuthorList(text, applyFilter));
             }
         }).subscribeOn(MainSchedulerProvider.INSTANCE.computation())
                 .observeOn(MainSchedulerProvider.INSTANCE.computation())
@@ -133,11 +143,11 @@ public enum SearchViewModel {
 
     }
 
-    public void handleSearchTag(final String text) {
+    public void handleSearchTag(final String text, final boolean applyFilter) {
         Observable.create(new ObservableOnSubscribe<List<Tag>>() {
             @Override
             public void subscribe(ObservableEmitter<List<Tag>> e) throws Exception {
-                e.onNext(TagRepository.getTags(text));
+                e.onNext(TagRepository.getTags(text, applyFilter));
             }
         }).subscribeOn(MainSchedulerProvider.INSTANCE.computation())
                 .observeOn(MainSchedulerProvider.INSTANCE.computation())

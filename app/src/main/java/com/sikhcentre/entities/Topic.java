@@ -17,6 +17,7 @@ import org.greenrobot.greendao.converter.PropertyConverter;
 
 import java.util.List;
 
+import lombok.Getter;
 import lombok.ToString;
 
 
@@ -228,6 +229,7 @@ public class Topic implements Parcelable{
         this.url = url;
     }
 
+    @Getter
     public enum TopicType {
         @SerializedName("0")
         UNKNOWN(0),

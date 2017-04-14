@@ -20,8 +20,8 @@ import com.sikhcentre.entities.Tag;
 import com.sikhcentre.models.FilterModel;
 import com.sikhcentre.schedulers.ISchedulerProvider;
 import com.sikhcentre.schedulers.MainSchedulerProvider;
+import com.sikhcentre.utils.AppInfoProvider;
 import com.sikhcentre.utils.FragmentUtils;
-import com.sikhcentre.utils.UIUtils;
 import com.sikhcentre.viewmodel.FilterViewModel;
 import com.sikhcentre.viewmodel.SearchViewModel;
 
@@ -43,13 +43,7 @@ public class FilterFragment extends BaseFragment {
 
     private FilterKeyAdapter filterKeyAdapter;
     private FilterValueAdapter filterValueAdapter;
-    private RecyclerView recyclerViewKey;
-    private RecyclerView recyclerViewVals;
-    private ImageButton cancelFilter;
-    private ImageButton clearFilter;
-    private ImageButton applyFilter;
     private SearchView searchView;
-    private FilterViewModel filterViewModel = FilterViewModel.INSTANCE;
     private SearchViewModel searchViewModel = SearchViewModel.INSTANCE;
 
     private CompositeDisposable subscription;
@@ -70,33 +64,12 @@ public class FilterFragment extends BaseFragment {
     }
 
     private void setUpViews() {
-        recyclerViewKey = (RecyclerView) getView().findViewById(R.id.filterFragmentRVFilterKeys);
-        recyclerViewVals = (RecyclerView) getView().findViewById(R.id.filterFragmentRVFilterValues);
-        cancelFilter = (ImageButton) getView().findViewById(R.id.filterFragmentBtnCancel);
-        clearFilter = (ImageButton) getView().findViewById(R.id.filterFragmentBtnClear);
-        applyFilter = (ImageButton) getView().findViewById(R.id.filterFragmentBtnApply);
+        RecyclerView recyclerViewKey = (RecyclerView) getView().findViewById(R.id.filterFragmentRVFilterKeys);
+        RecyclerView recyclerViewVals = (RecyclerView) getView().findViewById(R.id.filterFragmentRVFilterValues);
+        ImageButton cancelFilter = (ImageButton) getView().findViewById(R.id.filterFragmentBtnCancel);
+        ImageButton clearFilter = (ImageButton) getView().findViewById(R.id.filterFragmentBtnClear);
+        ImageButton applyFilter = (ImageButton) getView().findViewById(R.id.filterFragmentBtnApply);
         searchView = (SearchView) getView().findViewById(R.id.filterFragmentSearch);
-
-        cancelFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                UIUtils.showToast(getActivity(), "cancel filter");
-            }
-        });
-
-        clearFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                UIUtils.showToast(getActivity(), "Clear filter");
-            }
-        });
-
-        applyFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                UIUtils.showToast(getActivity(), "APPLY filter");
-            }
-        });
 
         recyclerViewKey.setLayoutManager(new LinearLayoutManager(getActivity()));
         filterKeyAdapter = new FilterKeyAdapter(FilterViewModel.getFilterKeys(),
@@ -137,18 +110,38 @@ public class FilterFragment extends BaseFragment {
         cancelFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentUtils.removeCurrentFragment(FilterFragment.this, getActivity().getSupportFragmentManager());
+                closeFragment();
             }
         });
+
+        applyFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AppInfoProvider.INSTANCE.setFilterSelectionModel(filterValueAdapter.getFilterSelectionModel());
+                closeFragment();
+            }
+        });
+
+        clearFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                filterValueAdapter.resetFilter();
+                AppInfoProvider.INSTANCE.setFilterSelectionModel(null);
+            }
+        });
+    }
+
+    private void closeFragment() {
+        FragmentUtils.removeCurrentFragment(FilterFragment.this, getActivity().getSupportFragmentManager());
     }
 
     private void handleFilterQuery(String text) {
         switch (filterValueAdapter.getCurrentFilterType()) {
             case AUTHOR:
-                searchViewModel.handleSearchAuthor(text);
+                searchViewModel.handleSearchAuthor(text, false);
                 break;
             case TAG:
-                searchViewModel.handleSearchTag(text);
+                searchViewModel.handleSearchTag(text, false);
                 break;
         }
     }
@@ -157,8 +150,8 @@ public class FilterFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         bind();
-        searchViewModel.handleSearchAuthor("");
-        searchViewModel.handleSearchTag("");
+        searchViewModel.handleSearchAuthor("", false);
+        searchViewModel.handleSearchTag("", false);
     }
 
     private void bind() {
