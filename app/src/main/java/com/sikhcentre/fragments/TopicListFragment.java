@@ -44,8 +44,6 @@ public class TopicListFragment extends BaseFragment {
     @NonNull
     ISchedulerProvider schedulerProvider = MainSchedulerProvider.INSTANCE;
 
-    private Button filterButton;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(TopicListFragment.class);
 
     @Nullable
@@ -77,7 +75,7 @@ public class TopicListFragment extends BaseFragment {
                 layoutManager.getOrientation());
         topicRecyclerView.addItemDecoration(dividerItemDecoration);
 
-        filterButton = (Button) getView().findViewById(R.id.topic_list_filter);
+        Button filterButton = (Button) getView().findViewById(R.id.topic_list_filter);
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

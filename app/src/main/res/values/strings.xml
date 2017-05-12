@@ -9,6 +9,7 @@
     <string name="menu_item_string_settings">Settings</string>
     <string name="menu_item_string_search">Search</string>
     <string name="menu_item_string_report">Report Issue</string>
+    <string name="menu_item_string_admin">Admin</string>
 
     <string name="search_hint">Search an item</string>
 
@@ -38,6 +39,8 @@
     <string name="filter_view_button_clear">Clear</string>
     <string name="filter_view_title">Filter Topics</string>
 
-
+    <string name="index_key_topic">Topic</string>
+    <string name="index_key_tag">Tag</string>
+    <string name="index_key_author">Author</string>
 
 </resources>

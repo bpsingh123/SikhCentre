@@ -19,8 +19,8 @@
         android:title="@string/menu_item_string_report"
         app:showAsAction="never" />
     <item
-        android:id="@+id/menu_item_action_settings"
+        android:id="@+id/menu_item_action_admin"
         android:orderInCategory="100"
-        android:title="@string/menu_item_string_settings"
+        android:title="@string/menu_item_string_admin"
         app:showAsAction="never" />
 </menu>

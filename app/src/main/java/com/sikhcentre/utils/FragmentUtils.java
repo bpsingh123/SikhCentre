@@ -13,7 +13,8 @@ public class FragmentUtils {
     public enum FragmentTag {
         TOPIC_LIST,
         TOPIC_DETAIL,
-        FILTER
+        FILTER,
+        ADD_TOPIC
     }
 
     public static void createFragment(int containerId, Fragment fragment, Bundle bundle,

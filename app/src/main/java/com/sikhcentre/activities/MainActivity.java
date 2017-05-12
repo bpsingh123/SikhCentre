@@ -14,6 +14,7 @@ import android.view.MenuItem;
 
 import com.sikhcentre.R;
 import com.sikhcentre.entities.Topic;
+import com.sikhcentre.fragments.AddTopicFragment;
 import com.sikhcentre.fragments.TopicDetailFragment;
 import com.sikhcentre.fragments.TopicListFragment;
 import com.sikhcentre.network.TopicMetadataDownloadHandler;
@@ -117,8 +118,10 @@ public class MainActivity extends AppCompatActivity
             case R.id.menu_item_action_report:
                 IssueReporter.report(MainActivity.this);
                 break;
-            case R.id.menu_item_action_settings:
-                return true;
+            case R.id.menu_item_action_admin:
+                FragmentUtils.replaceFragment(R.id.container_framelayout, new AddTopicFragment(),
+                        getIntent().getExtras(), getSupportFragmentManager(), FragmentUtils.FragmentTag.ADD_TOPIC);
+                break;
 
         }
 
